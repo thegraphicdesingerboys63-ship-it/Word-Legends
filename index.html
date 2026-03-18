@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CrossWord Legends</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0800;--surface:#1e1008;--card:#fdf6ec;--border:#c8956c;--primary:#7a3b10;--ph:#5c2d0c;--gold:#d4a017;--cream:#fdf6ec;--text:#1a0f00;--muted:#8a5c3a;--danger:#e74c3c;--success:#27ae60;--info:#2980b9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--cream);min-height:100vh}
+h1,h2,h3,.brand{font-family:'Cinzel',serif}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,8,0,.97);border-bottom:1px solid #3d2000;height:56px;display:flex;align-items:center;padding:0 20px;gap:16px}
+.brand{font-size:1.2rem;color:var(--gold);margin-right:8px}
+.nav-link{padding:6px 12px;border-radius:6px;font-size:.85rem;color:#d4b896;transition:.2s}
+.nav-link:hover,.nav-link.active{background:#3d2000;color:var(--cream)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.nav-stat{font-size:.8rem;color:#c4956c}
+.nav-user{position:relative}
+.nav-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;cursor:pointer;border:2px solid var(--gold)}
+.nav-dropdown{display:none;position:absolute;right:0;top:44px;background:#1e1008;border:1px solid #3d2000;border-radius:8px;min-width:180px;padding:6px 0;z-index:200}
+.nav-user:hover .nav-dropdown{display:block}
+.nav-dd-item{display:block;padding:8px 16px;font-size:.85rem;color:#d4b896;cursor:pointer;transition:.15s}
+.nav-dd-item:hover{background:#3d2000;color:var(--cream)}
+
+/* LAYOUT */
+#app{margin-top:56px;padding:24px;max-width:1100px;margin-left:auto;margin-right:auto}
+.page{padding-top:8px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'Lato',sans-serif;font-size:.9rem;font-weight:600;transition:.2s}
+.btn-primary{background:var(--primary);color:var(--cream)} .btn-primary:hover{background:var(--ph)}
+.btn-gold{background:var(--gold);color:#1a0f00} .btn-gold:hover{background:#b8880f}
+.btn-ghost{background:transparent;color:#d4b896;border:1px solid #5c3300} .btn-ghost:hover{background:#3d2000}
+.btn-danger{background:var(--danger);color:#fff} .btn-danger:hover{background:#c0392b}
+.btn-sm{padding:5px 12px;font-size:.8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* CARDS */
+.card{background:var(--card);border-radius:12px;padding:20px;color:var(--text)}
+.card-sm{padding:14px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:700px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+/* FORMS */
+.form-group{margin-bottom:16px}
+label{display:block;margin-bottom:6px;font-size:.85rem;font-weight:600;color:#c4956c}
+input,select,textarea{width:100%;padding:10px 14px;background:#2c1500;border:1px solid #5c3300;border-radius:8px;color:var(--cream);font-family:'Lato',sans-serif;font-size:.9rem;outline:none;transition:.2s}
+input:focus,select:focus{border-color:var(--gold)}
+.form-error{color:var(--danger);font-size:.82rem;margin-top:4px}
+.auth-box{max-width:420px;margin:60px auto}
+.auth-box h2{text-align:center;color:var(--gold);margin-bottom:24px;font-size:1.8rem}
+
+/* STAT CARDS */
+.stat-card{background:var(--card);border-radius:12px;padding:20px;text-align:center;color:var(--text)}
+.stat-icon{font-size:2rem;margin-bottom:8px}
+.stat-val{font-size:1.8rem;font-weight:700;color:var(--primary)}
+.stat-label{font-size:.82rem;color:var(--muted);margin-top:4px}
+
+/* CROSSWORD */
+.cw-wrap{overflow:auto;max-width:100%}
+.cw-grid{display:inline-grid;gap:2px;background:#3d2000;border:2px solid #3d2000;border-radius:4px}
+.cw-cell{width:34px;height:34px;background:#fff;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none}
+.cw-black{background:#2c1500}
+.cw-selected{background:#f39c12 !important}
+.cw-hl{background:#fdebd0 !important}
+.cw-found{background:#d5f5e3 !important}
+.cw-wrong{background:#fadbd8 !important}
+.cw-num{position:absolute;top:1px;left:2px;font-size:9px;color:#555;line-height:1}
+.cw-letter{font-size:15px;font-weight:700;color:#1a0f00;line-height:1}
+.cw-found .cw-letter{color:#1e8449}
+
+/* CLUES */
+.clue-list{list-style:none}
+.clue-item{padding:5px 8px;border-radius:5px;cursor:pointer;font-size:.85rem;margin-bottom:2px;transition:.15s;color:var(--text)}
+.clue-item:hover{background:rgba(122,59,16,.1)}
+.clue-item.active{background:rgba(212,160,23,.2);font-weight:700}
+.clue-item.found{text-decoration:line-through;color:var(--muted)}
+.clue-num{font-weight:700;color:var(--primary);margin-right:4px}
+
+/* LEADERBOARD */
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{padding:10px 12px;text-align:left;font-size:.78rem;color:var(--muted);text-transform:uppercase;border-bottom:2px solid #e8d5c0}
+.lb-table td{padding:10px 12px;border-bottom:1px solid #f0e4d4;font-size:.88rem;color:var(--text)}
+.lb-table tr:hover td{background:rgba(122,59,16,.05)}
+.rank-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.75rem;font-weight:700}
+.title-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.75rem;font-weight:600;border:1px solid currentColor}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid #3d2000;padding-bottom:0}
+.tab-btn{padding:8px 18px;background:transparent;border:none;border-bottom:3px solid transparent;color:#c4956c;cursor:pointer;font-family:'Lato',sans-serif;font-size:.88rem;font-weight:600;transition:.2s;margin-bottom:-2px}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* CHAT */
+.chat-box{height:320px;overflow-y:auto;background:#2c1500;border-radius:8px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
+.msg-bubble{max-width:75%;padding:8px 12px;border-radius:10px;font-size:.85rem}
+.msg-me{align-self:flex-end;background:var(--primary);color:var(--cream);border-bottom-right-radius:2px}
+.msg-them{align-self:flex-start;background:#3d2000;color:#d4b896;border-bottom-left-radius:2px}
+.msg-sender{font-size:.72rem;color:var(--muted);margin-bottom:2px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--card);border-radius:14px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;color:var(--text)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e8d5c0}
+.modal-header h3{font-family:'Cinzel',serif;color:var(--primary)}
+.modal-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted)}
+.modal-body{padding:20px}
+.modal-footer{padding:12px 20px;border-top:1px solid #e8d5c0;display:flex;gap:8px;justify-content:flex-end}
+
+/* TOAST */
+#toasts{position:fixed;top:70px;right:16px;z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#1e1008;border:1px solid #5c3300;border-radius:8px;padding:10px 16px;font-size:.85rem;color:var(--cream);animation:fadeIn .3s;max-width:320px;pointer-events:all}
+.toast.gold{border-color:var(--gold);background:#2a1a00}
+.toast.success{border-color:var(--success)}
+.toast.error{border-color:var(--danger)}
+@keyframes fadeIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+/* MISC */
+.spinner{width:32px;height:32px;border:3px solid #3d2000;border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.center{text-align:center}
+.page-title{font-size:1.6rem;color:var(--gold);margin-bottom:20px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.75rem;font-weight:700}
+.badge-brown{background:#5c3300;color:#fde8c8}
+.flex{display:flex;align-items:center;gap:8px}
+.mt{margin-top:16px}
+.hero{text-align:center;padding:40px 20px}
+.hero h1{font-size:2.4rem;color:var(--gold);margin-bottom:8px}
+.hero p{color:#c4956c;font-size:1rem}
+.score-bar-wrap{background:#2c1500;border-radius:8px;padding:14px;margin-bottom:16px}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-bar{height:10px;background:#3d2000;border-radius:5px;overflow:hidden}
+.score-fill{height:100%;background:var(--gold);transition:.5s}
+.progress-wrap{background:#2c1500;border-radius:8px;height:8px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;background:var(--gold);transition:.5s}
+.friends-list{display:flex;flex-direction:column;gap:6px}
+.friend-row{display:flex;align-items:center;gap:10px;padding:10px;background:#fff;border-radius:8px;cursor:pointer;transition:.15s;color:var(--text)}
+.friend-row:hover{background:#f5e6d5}
+.friend-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--cream);flex-shrink:0}
+.profile-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.ps-card{background:var(--card);border-radius:10px;padding:14px;text-align:center;color:var(--text)}
+.ps-icon{font-size:1.6rem;margin-bottom:4px}
+.ps-val{font-size:1.4rem;font-weight:700;color:var(--primary)}
+.ps-label{font-size:.78rem;color:var(--muted)}
+.user-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.user-avatar-lg{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:var(--cream);flex-shrink:0}
+.xp-bar-wrap{background:#e8d5c0;border-radius:4px;height:6px;overflow:hidden;margin-top:4px}
+.xp-bar-fill{height:100%;background:var(--gold)}
+.action-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.action-card{background:var(--card);border-radius:12px;padding:20px;cursor:pointer;transition:.2s;color:var(--text);border:2px solid transparent}
+.action-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.action-card .ac-icon{font-size:2rem;margin-bottom:8px}
+.action-card h3{font-size:1rem;margin-bottom:4px}
+.action-card p{font-size:.82rem;color:var(--muted)}
+.ranked-state{text-align:center;padding:40px 20px}
+.ranked-state h2{color:var(--gold);margin-bottom:12px}
+.timer-big{font-size:3rem;font-weight:700;color:var(--gold);font-family:'Cinzel',serif}
+</style>
+</head>
+<body>
+<nav id="nav"></nav>
+<main id="app" style="margin-top:56px;padding:24px;max-width:1100px;margin-left:auto;margin-right:auto"></main>
+<div id="toasts"></div>
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script>
+// ═══ STATE ════════════════════════════════════════════════════════════════════
+const S = { user: null, token: localStorage.getItem('tok'), socket: null, chatFriendId: null };
+
+// ═══ API ═════════════════════════════════════════════════════════════════════
+async function api(method, url, body) {
+  const r = await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json', ...(S.token ? { Authorization: `Bearer ${S.token}` } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!r.ok) { const e = await r.json().catch(() => ({ error: 'Error' })); throw new Error(e.error || 'Request failed'); }
+  return r.json();
+}
+
+// ═══ TOAST ════════════════════════════════════════════════════════════════════
+function toast(msg, type = '', dur = 3500) {
+  const d = document.createElement('div');
+  d.className = `toast ${type}`;
+  d.textContent = msg;
+  document.getElementById('toasts').append(d);
+  setTimeout(() => d.classList.add('fade-out'), dur - 400);
+  setTimeout(() => d.remove(), dur);
+}
+
+// ═══ MODAL ════════════════════════════════════════════════════════════════════
+function modal(title, body, footer = '') {
+  closeModal();
+  const o = document.createElement('div');
+  o.className = 'modal-overlay'; o.id = 'modal';
+  o.innerHTML = `<div class="modal-box"><div class="modal-header"><h3>${title}</h3><button class="modal-close" onclick="closeModal()">✕</button></div><div class="modal-body">${body}</div>${footer ? `<div class="modal-footer">${footer}</div>` : ''}</div>`;
+  o.addEventListener('click', e => { if (e.target === o) closeModal(); });
+  document.body.append(o);
+}
+function closeModal() { document.getElementById('modal')?.remove(); }
+
+// ═══ UTILS ════════════════════════════════════════════════════════════════════
+const app = () => document.getElementById('app');
+const el = id => document.getElementById(id);
+function go(hash) { location.hash = hash; }
+function getRank(rp) {
+  if (rp < 1100) return { name: 'Bronze', color: '#cd7f32', icon: '🥉' };
+  if (rp < 1300) return { name: 'Silver', color: '#a8a9ad', icon: '🥈' };
+  if (rp < 1600) return { name: 'Gold', color: '#d4a017', icon: '🥇' };
+  if (rp < 2000) return { name: 'Platinum', color: '#00b4d8', icon: '💠' };
+  if (rp < 2500) return { name: 'Diamond', color: '#9b59b6', icon: '💎' };
+  return { name: 'Master', color: '#e74c3c', icon: '👑' };
+}
+function roleColor(role) { return { owner: '#e74c3c', admin: '#9b59b6', mod: '#2980b9' }[role] || ''; }
+const RARITY_COLOR = { common: '#95a5a6', uncommon: '#27ae60', rare: '#2980b9', epic: '#8e44ad', legendary: '#e74c3c' };
+function titleBadge(t) {
+  if (!t) return '';
+  const c = RARITY_COLOR[t.rarity] || '#888';
+  return `<span class="title-badge" style="color:${c};border-color:${c}">${t.icon} ${t.name}</span>`;
+}
+
+// ═══ WORD BANK ════════════════════════════════════════════════════════════════
+const WB = [
+  // Easy
+  ['CAT','Feline pet',1],['DOG','Man\'s best friend',1],['SUN','Star in our solar system',1],['MOON','Earth\'s natural satellite',1],
+  ['FISH','Aquatic creature with fins',1],['BIRD','Feathered flying animal',1],['TREE','Tall woody plant',1],['RAIN','Water falling from clouds',1],
+  ['FIRE','Hot burning flame',1],['GOLD','Precious yellow metal',1],['BOOK','Pages bound together',1],['CITY','Large urban settlement',1],
+  ['HAND','Body part with five fingers',1],['LAKE','Inland body of water',1],['ROAD','Path for vehicles',1],['SNOW','Frozen precipitation',1],
+  ['FARM','Agricultural land',1],['WIND','Moving air',1],['ROCK','Hard mineral material',1],['SHIP','Large ocean vessel',1],
+  // Medium
+  ['APPLE','Red or green fruit',2],['BEACH','Sandy shoreline',2],['CLOUD','Water vapor in the sky',2],['DREAM','Images while asleep',2],
+  ['EAGLE','Large bird of prey',2],['FLAME','Visible combustion',2],['GRAPE','Small purple fruit',2],['HEART','Organ that pumps blood',2],
+  ['JEWEL','Precious gemstone',2],['LEMON','Sour yellow citrus',2],['MUSIC','Organized sound',2],['NIGHT','Time after sunset',2],
+  ['OCEAN','Vast body of salt water',2],['PIANO','Musical keyboard instrument',2],['QUEEN','Female monarch',2],['RIVER','Flowing body of water',2],
+  ['STORM','Severe weather event',2],['TIGER','Large striped jungle cat',2],['VOICE','Sound produced by speaking',2],['WATER','H2O liquid',2],
+  ['CRANE','Bird with long legs',2],['DANCE','Move rhythmically to music',2],['EARTH','Our home planet',2],['FROST','Thin ice on surfaces',2],
+  ['GIANT','Enormous creature',2],['HONEY','Sweet bee product',2],['IVORY','White elephant tusk material',2],['LIGHT','Electromagnetic radiation',2],
+  ['NORTH','Compass direction upward',2],['SWORD','Bladed melee weapon',2],
+  // Hard
+  ['ANCIENT','Very old or from long ago',3],['BALANCE','State of equilibrium',3],['CAPTAIN','Leader of a ship or team',3],
+  ['DIAMOND','Hardest natural material',3],['ECLIPSE','Celestial body blocking another',3],['FANTASY','Imaginative fiction genre',3],
+  ['GRAVITY','Force pulling objects down',3],['HISTORY','Record of past events',3],['IMAGINE','Form a mental picture',3],
+  ['JUSTICE','Fairness in law and morality',3],['KINGDOM','Territory ruled by a king',3],['LANTERN','Portable light source',3],
+  ['MYSTERY','Something unexplained',3],['NETWORK','Interconnected system',3],['OCTOBER','Tenth month of the year',3],
+  ['PYRAMID','Ancient triangular structure',3],['QUANTUM','Smallest discrete quantity',3],['RAINBOW','Colorful arc after rain',3],
+  ['SCIENCE','Systematic study of nature',3],['THUNDER','Sound of lightning',3],['UNICORN','Mythical horned horse',3],
+  ['WEATHER','Atmospheric conditions',3],['ALCHEMY','Medieval proto-chemistry',3],['DESTINY','Predetermined fate',3],
+  ['FORTUNE','Luck or wealth',3],['HARVEST','Gathering crops',3],['JOURNEY','Long-distance travel',3],['TRIUMPH','Great victory',3],
+];
+
+function getWords(level) {
+  const count = Math.min(5 + Math.floor(level * 0.7), 14);
+  const hardR = Math.min(0.1 + level * 0.05, 0.55);
+  const medR = 0.3;
+  const shuffle = a => [...a].sort(() => Math.random() - 0.5);
+  const easy = shuffle(WB.filter(w => w[2] === 1));
+  const med = shuffle(WB.filter(w => w[2] === 2));
+  const hard = shuffle(WB.filter(w => w[2] === 3));
+  const hc = Math.floor(count * hardR), mc = Math.floor(count * medR), ec = count - hc - mc;
+  return [...hard.slice(0, hc), ...med.slice(0, mc), ...easy.slice(0, ec)]
+    .slice(0, count).map(([w, c]) => ({ word: w, clue: c }));
+}
+
+// ═══ CROSSWORD GENERATOR ══════════════════════════════════════════════════════
+function generateCrossword(words) {
+  const SIZE = 21, C = 10;
+  const grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
+  const placed = [];
+
+  function canPlace(word, row, col, dir) {
+    for (let i = 0; i < word.length; i++) {
+      const r = dir === 'A' ? row : row + i;
+      const c = dir === 'A' ? col + i : col;
+      if (r < 0 || r >= SIZE || c < 0 || c >= SIZE) return false;
+      if (grid[r][c] && grid[r][c] !== word[i]) return false;
+      if (!grid[r][c]) {
+        if (dir === 'A') {
+          if (r > 0 && grid[r-1][c]) return false;
+          if (r < SIZE-1 && grid[r+1][c]) return false;
+        } else {
+          if (c > 0 && grid[r][c-1]) return false;
+          if (c < SIZE-1 && grid[r][c+1]) return false;
+        }
+      }
+    }
+    if (dir === 'A') {
+      if (col > 0 && grid[row][col-1]) return false;
+      if (col + word.length < SIZE && grid[row][col + word.length]) return false;
+    } else {
+      if (row > 0 && grid[row-1][col]) return false;
+      if (row + word.length < SIZE && grid[row + word.length] && grid[row + word.length][col]) return false;
+    }
+    return true;
+  }
+
+  function doPlace(wobj, row, col, dir) {
+    for (let i = 0; i < wobj.word.length; i++)
+      grid[dir==='A'?row:row+i][dir==='A'?col+i:col] = wobj.word[i];
+    placed.push({ ...wobj, row, col, dir, number: placed.length + 1, found: false });
+  }
+
+  if (!words.length) return { grid, placed, size: SIZE };
+  doPlace(words[0], C, C - Math.floor(words[0].word.length / 2), 'A');
+
+  for (let wi = 1; wi < words.length; wi++) {
+    const wobj = words[wi];
+    let best = null, bestScore = -Infinity;
+    for (const p of placed) {
+      const nd = p.dir === 'A' ? 'D' : 'A';
+      for (let pi = 0; pi < p.word.length; pi++) {
+        for (let wi2 = 0; wi2 < wobj.word.length; wi2++) {
+          if (p.word[pi] !== wobj.word[wi2]) continue;
+          const r = p.dir === 'A' ? p.row - wi2 : p.row + pi;
+          const c = p.dir === 'A' ? p.col + pi : p.col - wi2;
+          if (!canPlace(wobj.word, r, c, nd)) continue;
+          const score = 100 - Math.abs(r - C) - Math.abs(c - C);
+          if (score > bestScore) { bestScore = score; best = { r, c, nd }; }
+        }
+      }
+    }
+    if (best) doPlace(wobj, best.r, best.c, best.nd);
+  }
+
+  // Trim grid
+  let r0=SIZE,r1=0,c0=SIZE,c1=0;
+  for (let r=0;r<SIZE;r++) for (let c=0;c<SIZE;c++) if (grid[r][c]) { r0=Math.min(r0,r);r1=Math.max(r1,r);c0=Math.min(c0,c);c1=Math.max(c1,c); }
+  const pad=1, sz=Math.max(r1-r0+pad*2+2, c1-c0+pad*2+2, 8);
+  const t = Array.from({length:sz},()=>Array(sz).fill(null));
+  const dr=r0-pad, dc=c0-pad;
+  for (let r=r0;r<=r1;r++) for (let c=c0;c<=c1;c++) if (grid[r][c]) t[r-dr][c-dc]=grid[r][c];
+  placed.forEach(p => { p.row -= dr; p.col -= dc; });
+  return { grid: t, placed, size: sz };
+}
+
+// ═══ GAME ENGINE ══════════════════════════════════════════════════════════════
+let G = { data: null, level: 1, userGrid: [], selR: -1, selC: -1, selDir: 'A', selWord: -1, hints: 3, startTime: 0, timer: null, done: false, isRanked: false, matchId: null };
+
+function findWord(r, c, dir) {
+  if (!G.data) return -1;
+  return G.data.placed.findIndex(p => {
+    if (p.dir !== dir) return false;
+    if (dir === 'A') return p.row === r && c >= p.col && c < p.col + p.word.length;
+    return p.col === c && r >= p.row && r < p.row + p.word.length;
+  });
+}
+
+function selectCell(r, c) {
+  if (!G.data || !G.data.grid[r]?.[c]) return;
+  if (r === G.selR && c === G.selC) {
+    const nd = G.selDir === 'A' ? 'D' : 'A';
+    if (findWord(r, c, nd) >= 0) G.selDir = nd;
+  } else {
+    G.selR = r; G.selC = c;
+    if (findWord(r, c, G.selDir) < 0) G.selDir = G.selDir === 'A' ? 'D' : 'A';
+  }
+  G.selWord = findWord(G.selR, G.selC, G.selDir);
+  refreshGrid();
+}
+
+function advance(delta) {
+  if (G.selWord < 0) return;
+  const p = G.data.placed[G.selWord];
+  if (p.dir === 'A') { const nc = G.selC + delta; if (nc >= p.col && nc < p.col + p.word.length) G.selC = nc; }
+  else { const nr = G.selR + delta; if (nr >= p.row && nr < p.row + p.word.length) G.selR = nr; }
+}
+
+function nextWord(dir) {
+  if (!G.data) return;
+  let idx = (G.selWord + dir + G.data.placed.length) % G.data.placed.length;
+  const p = G.data.placed[idx];
+  G.selR = p.row; G.selC = p.col; G.selDir = p.dir; G.selWord = idx;
+  refreshGrid();
+}
+
+function onKey(e) {
+  if (G.selR < 0 || G.done) return;
+  if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+    e.preventDefault();
+    if (!G.userGrid[G.selR]) G.userGrid[G.selR] = [];
+    G.userGrid[G.selR][G.selC] = e.key.toUpperCase();
+    checkWordAt(G.selWord);
+    advance(1);
+    refreshGrid(); return;
+  }
+  if (e.key === 'Backspace') {
+    e.preventDefault();
+    if (!G.userGrid[G.selR]?.[G.selC]) advance(-1);
+    if (!G.userGrid[G.selR]) G.userGrid[G.selR] = [];
+    G.userGrid[G.selR][G.selC] = '';
+    refreshGrid(); return;
+  }
+  const moves = { ArrowRight:[0,1], ArrowLeft:[0,-1], ArrowDown:[1,0], ArrowUp:[-1,0] };
+  if (moves[e.key]) {
+    e.preventDefault();
+    const [dr, dc] = moves[e.key];
+    const nr = G.selR+dr, nc = G.selC+dc;
+    if (G.data.grid[nr]?.[nc]) selectCell(nr, nc);
+    return;
+  }
+  if (e.key === 'Tab') { e.preventDefault(); nextWord(e.shiftKey ? -1 : 1); }
+}
+
+function checkWordAt(wIdx) {
+  if (wIdx < 0 || !G.data) return;
+  const p = G.data.placed[wIdx];
+  if (p.found) return;
+  let correct = true;
+  for (let i = 0; i < p.word.length; i++) {
+    const r = p.dir==='A' ? p.row : p.row+i;
+    const c = p.dir==='A' ? p.col+i : p.col;
+    if ((G.userGrid[r]?.[c] || '') !== p.word[i]) { correct = false; break; }
+  }
+  if (correct) {
+    p.found = true;
+    const score = p.word.length * 10 * G.level;
+    toast(`✅ "${p.word}" found! +${score}pts`, 'success');
+    if (G.isRanked && S.socket) {
+      S.socket.emit('ranked:word_found', { matchId: G.matchId, word: p.word, score });
+    }
+    el('clue-' + wIdx)?.classList.add('found');
+    const allFound = G.data.placed.every(p => p.found);
+    if (allFound && !G.done) finishGame();
+  }
+}
+
+function checkAll() {
+  if (!G.data) return;
+  G.data.placed.forEach((p, i) => { if (!p.found) checkWordAt(i); });
+  refreshGrid();
+}
+
+function useHint() {
+  if (G.hints <= 0 || G.selWord < 0) return;
+  const p = G.data.placed[G.selWord];
+  if (p.found) return;
+  // Find first wrong cell in selected word
+  for (let i = 0; i < p.word.length; i++) {
+    const r = p.dir==='A' ? p.row : p.row+i;
+    const c = p.dir==='A' ? p.col+i : p.col;
+    if ((G.userGrid[r]?.[c] || '') !== p.word[i]) {
+      if (!G.userGrid[r]) G.userGrid[r] = [];
+      G.userGrid[r][c] = p.word[i];
+      G.hints--;
+      el('hints-left') && (el('hints-left').textContent = G.hints);
+      checkWordAt(G.selWord);
+      refreshGrid();
+      return;
+    }
+  }
+}
+
+async function finishGame() {
+  G.done = true;
+  if (G.timer) clearInterval(G.timer);
+  const elapsed = Math.floor((Date.now() - G.startTime) / 1000);
+  const totalScore = G.data.placed.reduce((sum, p) => sum + p.word.length * 10 * G.level, 0);
+  if (!G.isRanked) {
+    try {
+      const r = await api('POST', '/api/game/complete', { level: G.level, score: totalScore, timeTaken: elapsed, wordsFound: G.data.placed.length });
+      S.user = r.user;
+      renderNav();
+      if (r.newTitles?.length) r.newTitles.forEach(t => toast(`🏅 Title unlocked: ${t.icon} ${t.name}!`, 'gold', 5000));
+      modal('🎉 Level Complete!',
+        `<div class="center"><div style="font-size:3rem">🎊</div><h2 style="color:#7a3b10;margin:12px 0">Level ${G.level} Complete!</h2><p>+${r.xpGain} XP &nbsp; +${r.coinGain} Coins</p>${r.newTitles?.map(t=>titleBadge(t)).join(' ')||''}</div>`,
+        `<button class="btn btn-primary" onclick="closeModal();go('play/${G.level+1}')">Next Level ▶</button><button class="btn btn-ghost" onclick="closeModal();go('home')">Home</button>`
+      );
+    } catch (e) { toast(e.message, 'error'); }
+  }
+}
+
+function refreshGrid() {
+  const wrap = el('cw-grid-wrap');
+  if (!wrap || !G.data) return;
+  wrap.innerHTML = buildGrid();
+}
+
+function buildGrid() {
+  const { grid, placed, size } = G.data;
+  const nums = {};
+  placed.forEach(p => { const k = `${p.row},${p.col}`; if (!nums[k]) nums[k] = p.number; });
+  let html = `<div class="cw-grid" style="grid-template-columns:repeat(${size},34px);grid-template-rows:repeat(${size},34px)">`;
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (!grid[r][c]) { html += '<div class="cw-black"></div>'; continue; }
+      const num = nums[`${r},${c}`] || '';
+      const letter = G.userGrid[r]?.[c] || '';
+      const isSel = r===G.selR && c===G.selC;
+      const isHl = G.selWord>=0 && (() => {
+        const p = placed[G.selWord];
+        return p.dir==='A' ? p.row===r && c>=p.col && c<p.col+p.word.length
+          : p.col===c && r>=p.row && r<p.row+p.word.length;
+      })();
+      const pw = placed.find(p => p.found && (p.dir==='A' ? p.row===r && c>=p.col && c<p.col+p.word.length : p.col===c && r>=p.row && r<p.row+p.word.length));
+      let cls = 'cw-cell';
+      if (isSel) cls += ' cw-selected';
+      else if (pw) cls += ' cw-found';
+      else if (isHl) cls += ' cw-hl';
+      html += `<div class="${cls}" data-r="${r}" data-c="${c}">${num?`<span class="cw-num">${num}</span>`:''}<span class="cw-letter">${letter}</span></div>`;
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function buildClues() {
+  const across = G.data.placed.filter(p => p.dir==='A').sort((a,b)=>a.number-b.number);
+  const down = G.data.placed.filter(p => p.dir==='D').sort((a,b)=>a.number-b.number);
+  const clueItem = (p, i) => `<li class="clue-item${p.found?' found':''}" id="clue-${G.data.placed.indexOf(p)}" onclick="selectCell(${p.row},${p.col})"><span class="clue-num">${p.number}.</span>${p.clue}</li>`;
+  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
+    <div><h4 style="color:#7a3b10;margin-bottom:8px">Across</h4><ul class="clue-list">${across.map(clueItem).join('')}</ul></div>
+    <div><h4 style="color:#7a3b10;margin-bottom:8px">Down</h4><ul class="clue-list">${down.map(clueItem).join('')}</ul></div>
+  </div>`;
+}
+
+// ═══ SOCKET ════════════════════════════════════════════════════════════════════
+function connectSocket() {
+  if (S.socket?.connected) return;
+  S.socket = io({ auth: { token: S.token } });
+  S.socket.on('chat:new_message', msg => {
+    const cb = el('chat-messages');
+    if (cb && (S.chatFriendId===msg.sender_id || S.chatFriendId===msg.receiver_id)) {
+      cb.insertAdjacentHTML('beforeend', msgHTML(msg, S.user.id));
+      cb.scrollTop = cb.scrollHeight;
+    } else if (msg.sender_id !== S.user.id) {
+      toast(`💬 ${msg.sender_name}: ${msg.content.slice(0,40)}`);
+    }
+  });
+  S.socket.on('titles:new', titles => titles.forEach(t => toast(`🏅 Title unlocked: ${t.icon} ${t.name}!`, 'gold', 5000)));
+}
+
+// ═══ NAVBAR ════════════════════════════════════════════════════════════════════
+function renderNav() {
+  const u = S.user;
+  const hash = location.hash.slice(1);
+  const links = [
+    ['home','🏠 Home'],['play','📝 Play'],['ranked','⚔️ Ranked'],['leaderboard','🏆 Ranks'],['friends','👥 Friends'],
+    ...(u && ['mod','admin','owner'].includes(u.role) ? [['admin','🛡️ Admin']] : [])
+  ];
+  const rank = u ? getRank(u.rank_points) : null;
+  el('nav').innerHTML = `
+    <span class="brand">✒️ CrossWord Legends</span>
+    ${links.map(([h,l])=>`<a href="#${h}" class="nav-link${hash===h?' active':''}">${l}</a>`).join('')}
+    <div class="nav-right">
+      ${u ? `<span class="nav-stat">🪙 ${u.coins?.toLocaleString()}</span><span class="nav-stat">⭐ ${u.xp?.toLocaleString()}</span>
+        <div class="nav-user">
+          <div class="nav-avatar" style="border-color:${rank?.color}">${u.username[0].toUpperCase()} <span>${rank?.icon}</span></div>
+          <div class="nav-dropdown">
+            ${u.role!=='user'?`<span class="nav-dd-item" style="color:${roleColor(u.role)}">${u.role.toUpperCase()}</span>`:''}
+            <a href="#profile/${u.id}" class="nav-dd-item">👤 Profile</a>
+            <span class="nav-dd-item" onclick="logout()">🚪 Logout</span>
+          </div>
+        </div>` : `<a href="#login" class="btn btn-ghost btn-sm">Login</a><a href="#register" class="btn btn-primary btn-sm">Sign Up</a>`}
+    </div>`;
+}
+
+// ═══ PAGE: LOGIN ═══════════════════════════════════════════════════════════════
+function renderLogin() {
+  app().innerHTML = `<div class="auth-box"><h2>✒️ CrossWord Legends</h2>
+    <div class="card">
+      <div class="form-group"><label>Username or Email</label><input id="li-u" placeholder="Enter username or email"></div>
+      <div class="form-group"><label>Password</label><input id="li-p" type="password" placeholder="Enter password"></div>
+      <div id="li-err" class="form-error"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="doLogin()">Login</button>
+      <p style="text-align:center;margin-top:12px;font-size:.85rem;color:#c4956c">No account? <a href="#register" style="color:#d4a017">Sign Up</a></p>
+    </div></div>`;
+  el('li-p').addEventListener('keydown', e => e.key==='Enter' && doLogin());
+}
+
+async function doLogin() {
+  const u = el('li-u').value.trim(), p = el('li-p').value;
+  if (!u || !p) { el('li-err').textContent = 'All fields required'; return; }
+  try {
+    const r = await api('POST', '/api/auth/login', { username: u, password: p });
+    S.token = r.token; S.user = r.user;
+    localStorage.setItem('tok', r.token);
+    connectSocket();
+    go('home');
+  } catch (e) { el('li-err').textContent = e.message; }
+}
+
+// ═══ PAGE: REGISTER ═════════════════════════════════════════════════════════════
+function renderRegister() {
+  app().innerHTML = `<div class="auth-box"><h2>Create Account</h2>
+    <div class="card">
+      <div class="form-group"><label>Username</label><input id="rg-u" placeholder="3-20 characters"></div>
+      <div class="form-group"><label>Email</label><input id="rg-e" type="email" placeholder="your@email.com"></div>
+      <div class="form-group"><label>Password</label><input id="rg-p" type="password" placeholder="Min 6 characters"></div>
+      <div id="rg-err" class="form-error"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="doRegister()">Sign Up</button>
+      <p style="text-align:center;margin-top:12px;font-size:.85rem;color:#c4956c">Have account? <a href="#login" style="color:#d4a017">Login</a></p>
+    </div></div>`;
+}
+
+async function doRegister() {
+  const u=el('rg-u').value.trim(), e=el('rg-e').value.trim(), p=el('rg-p').value;
+  if (!u||!e||!p) { el('rg-err').textContent='All fields required'; return; }
+  try {
+    const r = await api('POST', '/api/auth/register', { username: u, email: e, password: p });
+    S.token = r.token; S.user = r.user;
+    localStorage.setItem('tok', r.token);
+    connectSocket();
+    go('home');
+  } catch (err) { el('rg-err').textContent = err.message; }
+}
+
+// ═══ PAGE: HOME ══════════════════════════════════════════════════════════════════
+async function renderHome() {
+  const u = S.user;
+  const rank = getRank(u.rank_points);
+  const lvl = Math.floor(u.xp / 1000) + 1;
+  const xpPct = (u.xp % 1000) / 10;
+  const activeTitle = u.active_title ? ` — fetching title...` : '';
+  app().innerHTML = `<div class="page">
+    <div class="hero"><h1>CrossWord Legends</h1><p style="color:#c4956c">Welcome back, <strong>${u.username}</strong>!</p></div>
+    <div class="grid-4" style="margin-bottom:24px">
+      <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val">${u.xp.toLocaleString()}</div><div class="stat-label">Total XP</div><div class="progress-wrap" style="margin-top:8px"><div class="progress-fill" style="width:${xpPct}%"></div></div><div style="font-size:.75rem;color:#c4956c;margin-top:4px">Level ${lvl}</div></div>
+      <div class="stat-card"><div class="stat-icon">🪙</div><div class="stat-val">${u.coins.toLocaleString()}</div><div class="stat-label">Coins</div></div>
+      <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-val">${u.levels_completed}</div><div class="stat-label">Levels Done</div></div>
+      <div class="stat-card"><div class="stat-icon">${rank.icon}</div><div class="stat-val" style="color:${rank.color}">${rank.name}</div><div class="stat-label">${u.rank_points} RP</div></div>
+    </div>
+    <h2 class="page-title" style="font-size:1.1rem">Quick Actions</h2>
+    <div class="action-grid">
+      <div class="action-card" onclick="go('play')"><div class="ac-icon">📝</div><h3>Play</h3><p>Continue your crossword journey</p></div>
+      <div class="action-card" onclick="go('ranked')"><div class="ac-icon">⚔️</div><h3>Ranked</h3><p>Compete against other players</p></div>
+      <div class="action-card" onclick="go('leaderboard')"><div class="ac-icon">🏆</div><h3>Leaderboard</h3><p>See top players worldwide</p></div>
+      <div class="action-card" onclick="go('friends')"><div class="ac-icon">👥</div><h3>Friends</h3><p>Chat with your friends</p></div>
+    </div>
+  </div>`;
+}
+
+// ═══ PAGE: GAME ═══════════════════════════════════════════════════════════════════
+function renderGame(lvl) {
+  const level = lvl || (S.user.levels_completed + 1) || 1;
+  G = { data: null, level, userGrid: [], selR: -1, selC: -1, selDir: 'A', selWord: -1, hints: 3, startTime: Date.now(), timer: null, done: false, isRanked: false, matchId: null };
+  const words = getWords(level);
+  G.data = generateCrossword(words);
+
+  let secs = 0;
+  app().innerHTML = `<div class="page">
+    <div class="flex" style="margin-bottom:16px">
+      <h1 class="page-title" style="margin:0">Level ${level}</h1>
+      <span style="margin-left:auto;display:flex;gap:10px;align-items:center">
+        <span>⏱ <span id="game-timer">0:00</span></span>
+        <span id="hints-left">${G.hints}</span> 💡 <button class="btn btn-ghost btn-sm" onclick="useHint()">Hint</button>
+        <button class="btn btn-ghost btn-sm" onclick="checkAll()">Check</button>
+      </span>
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div><div id="cw-grid-wrap" class="cw-wrap"></div></div>
+      <div style="flex:1;min-width:220px"><div class="card" id="clues-panel"></div></div>
+    </div>
+  </div>`;
+
+  el('cw-grid-wrap').innerHTML = buildGrid();
+  el('clues-panel').innerHTML = buildClues();
+
+  G.timer = setInterval(() => {
+    secs++;
+    const m = Math.floor(secs/60), s = secs%60;
+    if (el('game-timer')) el('game-timer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  }, 1000);
+
+  document.addEventListener('keydown', onKey);
+  window.addEventListener('hashchange', cleanupGame, { once: true });
+}
+
+function cleanupGame() {
+  document.removeEventListener('keydown', onKey);
+  if (G.timer) clearInterval(G.timer);
+}
+
+// ═══ PAGE: RANKED ════════════════════════════════════════════════════════════════
+function renderRanked() {
+  let matchId = null, timerInt = null;
+  const sock = S.socket;
+
+  function showIdle() {
+    app().innerHTML = `<div class="ranked-state"><h2>⚔️ Ranked Mode</h2>
+      <p style="color:#c4956c;margin-bottom:24px">Compete in a 2-minute word-finding battle!</p>
+      <button class="btn btn-gold" style="font-size:1.1rem;padding:14px 32px" onclick="joinQueue()">⚔️ Find Match</button></div>`;
+  }
+
+  function showWaiting() {
+    app().innerHTML = `<div class="ranked-state"><h2>🔍 Finding Match...</h2>
+      <div class="spinner" style="margin:20px auto"></div>
+      <p style="color:#c4956c;margin:16px 0">Searching for opponent</p>
+      <button class="btn btn-ghost" onclick="leaveQueue()">Cancel</button></div>`;
+  }
+
+  window.joinQueue = () => { sock.emit('ranked:join_queue'); showWaiting(); };
+  window.leaveQueue = () => { sock.emit('ranked:leave_queue'); showIdle(); };
+
+  function onWaiting() { showWaiting(); }
+
+  function onMatchFound(data) {
+    matchId = data.matchId;
+    const isP1 = data.player1.id === S.user.id;
+    const me = isP1 ? data.player1 : data.player2;
+    const opp = isP1 ? data.player2 : data.player1;
+    let secs = data.duration;
+
+    const words = getWords(data.level);
+    G = { data: null, level: data.level, userGrid: [], selR:-1, selC:-1, selDir:'A', selWord:-1, hints:0, startTime:Date.now(), timer:null, done:false, isRanked:true, matchId };
+    G.data = generateCrossword(words);
+
+    app().innerHTML = `<div class="page">
+      <div class="score-bar-wrap">
+        <div class="score-row">
+          <span><strong>${me.username}</strong> <span id="my-score">0</span> words</span>
+          <span class="timer-big" id="r-timer">${secs}</span>
+          <span><span id="opp-score">0</span> words <strong>${opp.username}</strong></span>
+        </div>
+        <div class="score-bar"><div class="score-fill" id="score-fill" style="width:50%"></div></div>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <div><div id="cw-grid-wrap" class="cw-wrap"></div></div>
+        <div style="flex:1;min-width:220px"><div class="card" id="clues-panel"></div></div>
+      </div>
+    </div>`;
+
+    el('cw-grid-wrap').innerHTML = buildGrid();
+    el('clues-panel').innerHTML = buildClues();
+    document.addEventListener('keydown', onKey);
+
+    timerInt = setInterval(() => {
+      secs--;
+      if (el('r-timer')) el('r-timer').textContent = secs;
+      if (secs <= 0) clearInterval(timerInt);
+    }, 1000);
+  }
+
+  function onScoreUpdate(d) {
+    const isP1 = G.data && true; // determined by match context
+    if (el('my-score')) el('my-score').textContent = d.p1Words ?? d.p1Score ?? 0;
+    if (el('opp-score')) el('opp-score').textContent = d.p2Words ?? d.p2Score ?? 0;
+    const total = (d.p1Score||0) + (d.p2Score||0);
+    const pct = total > 0 ? Math.round((d.p1Score||0)/total*100) : 50;
+    if (el('score-fill')) el('score-fill').style.width = pct + '%';
+  }
+
+  function onMatchEnded(d) {
+    if (timerInt) clearInterval(timerInt);
+    document.removeEventListener('keydown', onKey);
+    G.done = true;
+    const won = d.winnerId === S.user.id;
+    api('GET', '/api/game/me').then(u => { S.user = u; renderNav(); }).catch(()=>{});
+    modal(
+      won ? '🏆 Victory!' : '😢 Defeat',
+      `<div class="center"><div style="font-size:3rem">${won?'🏆':'😢'}</div>
+       <h2 style="color:${won?'#d4a017':'#e74c3c'};margin:12px 0">${won?'You Won!':'You Lost'}</h2>
+       <p>${won?`+${d.rpGain} RP`:`-${d.rpLoss} RP`}</p></div>`,
+      `<button class="btn btn-primary" onclick="closeModal();renderRanked()">Play Again</button><button class="btn btn-ghost" onclick="closeModal();go('home')">Home</button>`
+    );
+  }
+
+  sock.on('ranked:waiting', onWaiting);
+  sock.on('ranked:match_found', onMatchFound);
+  sock.on('ranked:score_update', onScoreUpdate);
+  sock.on('ranked:match_ended', onMatchEnded);
+
+  window.addEventListener('hashchange', () => {
+    sock.off('ranked:waiting', onWaiting);
+    sock.off('ranked:match_found', onMatchFound);
+    sock.off('ranked:score_update', onScoreUpdate);
+    sock.off('ranked:match_ended', onMatchEnded);
+    if (timerInt) clearInterval(timerInt);
+    document.removeEventListener('keydown', onKey);
+  }, { once: true });
+
+  showIdle();
+}
+
+// ═══ PAGE: LEADERBOARD ══════════════════════════════════════════════════════════
+async function renderLeaderboard() {
+  app().innerHTML = `<div class="page"><h1 class="page-title">🏆 Leaderboard</h1>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchLb(this,'rank')">⚔️ Ranked</button>
+      <button class="tab-btn" onclick="switchLb(this,'xp')">⭐ XP</button>
+      <button class="tab-btn" onclick="switchLb(this,'coins')">🪙 Coins</button>
+      <button class="tab-btn" onclick="switchLb(this,'levels')">📚 Levels</button>
+    </div>
+    <div class="card" id="lb-content"><div class="spinner"></div></div>
+  </div>`;
+  loadLb('rank');
+}
+
+async function loadLb(type) {
+  try {
+    const data = await api('GET', `/api/game/leaderboard/${type}`);
+    const col = { rank:'rank_points', xp:'xp', coins:'coins', levels:'levels_completed' }[type];
+    const colLabel = { rank:'RP', xp:'XP', coins:'Coins', levels:'Levels' }[type];
+    el('lb-content').innerHTML = `<table class="lb-table"><thead><tr><th>#</th><th>Player</th><th>Title</th><th>${colLabel}</th></tr></thead><tbody>
+      ${data.map((u,i) => {
+        const rank = getRank(u.rank_points);
+        const rc = roleColor(u.role);
+        return `<tr onclick="go('profile/${u.id}')" style="cursor:pointer">
+          <td><strong>${i+1}</strong></td>
+          <td>${rc?`<span style="color:${rc}">${u.role==='owner'?'👑':u.role==='admin'?'🛡️':'🔨'} </span>`:''}${u.username}</td>
+          <td>${u.active_title ? titleBadge({id:u.active_title,name:u.active_title,icon:'',rarity:'common'}) : '<span style="color:#ccc">—</span>'}</td>
+          <td><strong>${u[col]?.toLocaleString()}</strong></td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>`;
+    // Load actual title defs
+    try {
+      const titles = await api('GET', '/api/titles/all');
+      const tmap = Object.fromEntries(titles.map(t=>[t.id,t]));
+      el('lb-content').querySelectorAll('tbody tr').forEach((tr,i) => {
+        const u = data[i];
+        const td = tr.querySelectorAll('td')[2];
+        td.innerHTML = u.active_title && tmap[u.active_title] ? titleBadge(tmap[u.active_title]) : '<span style="color:#ccc">—</span>';
+      });
+    } catch {}
+  } catch (e) { el('lb-content').innerHTML = `<p style="color:red">${e.message}</p>`; }
+}
+
+window.switchLb = (btn, type) => {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  el('lb-content').innerHTML = '<div class="spinner"></div>';
+  loadLb(type);
+};
+
+// ═══ PAGE: FRIENDS ═══════════════════════════════════════════════════════════════
+async function renderFriends() {
+  app().innerHTML = `<div class="page"><h1 class="page-title">👥 Friends</h1>
+    <div class="tabs">
+      <button class="tab-btn active" id="ftab-friends" onclick="switchFTab(this,'friends')">Friends</button>
+      <button class="tab-btn" id="ftab-requests" onclick="switchFTab(this,'requests')">Requests</button>
+      <button class="tab-btn" id="ftab-find" onclick="switchFTab(this,'find')">Find</button>
+    </div>
+    <div id="ftab-content"></div>
+  </div>`;
+  showFriends();
+}
+
+window.switchFTab = (btn, tab) => {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab==='friends') showFriends();
+  else if (tab==='requests') showRequests();
+  else showFind();
+};
+
+async function showFriends() {
+  try {
+    const data = await api('GET', '/api/friends');
+    const friends = data.filter(f => f.status==='accepted');
+    el('ftab-content').innerHTML = `<div class="friends-list">
+      ${friends.length ? friends.map(f => `<div class="friend-row" onclick="openChat(${f.id},'${f.username}')">
+        <div class="friend-avatar">${f.username[0].toUpperCase()}</div>
+        <div><strong>${f.username}</strong><div style="font-size:.78rem;color:#888">${getRank(f.rank_points).icon} ${getRank(f.rank_points).name} • ${f.levels_completed} levels</div></div>
+        <button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="event.stopPropagation();removeFriend(${f.id})">Remove</button>
+      </div>`).join('') : '<p style="color:#ccc;text-align:center;padding:20px">No friends yet. Find some!</p>'}
+    </div>`;
+  } catch (e) { el('ftab-content').innerHTML = `<p style="color:red">${e.message}</p>`; }
+}
+
+async function showRequests() {
+  try {
+    const data = await api('GET', '/api/friends');
+    const incoming = data.filter(f => f.status==='pending' && f.direction==='received');
+    const outgoing = data.filter(f => f.status==='pending' && f.direction==='sent');
+    el('ftab-content').innerHTML = `
+      <h3 style="color:#7a3b10;margin-bottom:10px">Incoming (${incoming.length})</h3>
+      <div class="friends-list">${incoming.map(f=>`<div class="friend-row">
+        <div class="friend-avatar">${f.username[0].toUpperCase()}</div>
+        <strong>${f.username}</strong>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="acceptFriend(${f.id})">Accept</button>
+        <button class="btn btn-ghost btn-sm" onclick="removeFriend(${f.id})">Decline</button>
+      </div>`).join('')||'<p style="color:#ccc">None</p>'}</div>
+      <h3 style="color:#7a3b10;margin:16px 0 10px">Sent (${outgoing.length})</h3>
+      <div class="friends-list">${outgoing.map(f=>`<div class="friend-row">
+        <div class="friend-avatar">${f.username[0].toUpperCase()}</div>
+        <strong>${f.username}</strong>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="removeFriend(${f.id})">Cancel</button>
+      </div>`).join('')||'<p style="color:#ccc">None</p>'}</div>`;
+  } catch (e) { el('ftab-content').innerHTML = `<p style="color:red">${e.message}</p>`; }
+}
+
+function showFind() {
+  el('ftab-content').innerHTML = `<div class="card" style="margin-bottom:16px">
+    <div class="flex"><input id="search-q" placeholder="Search by username..." oninput="searchUsers()">
+    <button class="btn btn-primary btn-sm" onclick="searchUsers()">🔍</button></div>
+  </div><div id="search-results"></div>`;
+}
+
+let searchT;
+window.searchUsers = () => {
+  clearTimeout(searchT);
+  searchT = setTimeout(async () => {
+    const q = el('search-q').value.trim();
+    if (!q) { el('search-results').innerHTML=''; return; }
+    try {
+      const data = await api('GET', `/api/game/search?q=${encodeURIComponent(q)}`);
+      el('search-results').innerHTML = `<div class="friends-list">${data.map(u=>`<div class="friend-row">
+        <div class="friend-avatar">${u.username[0].toUpperCase()}</div>
+        <span onclick="go('profile/${u.id}')" style="cursor:pointer"><strong>${u.username}</strong></span>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="sendRequest(${u.id})">+ Add</button>
+      </div>`).join('')||'<p style="color:#ccc">No results</p>'}</div>`;
+    } catch {}
+  }, 300);
+};
+
+window.sendRequest = async id => {
+  try { await api('POST', `/api/friends/request/${id}`); toast('Friend request sent!', 'success'); }
+  catch (e) { toast(e.message, 'error'); }
+};
+window.acceptFriend = async id => {
+  try { await api('POST', `/api/friends/accept/${id}`); showRequests(); toast('Friend accepted!', 'success'); }
+  catch (e) { toast(e.message, 'error'); }
+};
+window.removeFriend = async id => {
+  try { await api('DELETE', `/api/friends/${id}`); showFriends(); }
+  catch (e) { toast(e.message, 'error'); }
+};
+
+window.openChat = async (fid, fname) => {
+  S.chatFriendId = fid;
+  modal(`💬 ${fname}`, `<div id="chat-messages" class="chat-box"><div class="spinner"></div></div>
+    <div class="flex"><input id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg(${fid})">
+    <button class="btn btn-primary btn-sm" onclick="sendMsg(${fid})">Send</button></div>`, '');
+  try {
+    const msgs = await api('GET', `/api/friends/messages/${fid}`);
+    const cb = el('chat-messages');
+    cb.innerHTML = msgs.map(m => msgHTML(m, S.user.id)).join('');
+    cb.scrollTop = cb.scrollHeight;
+  } catch {}
+};
+
+function msgHTML(m, myId) {
+  const isMe = m.sender_id === myId;
+  return `<div class="msg-bubble ${isMe?'msg-me':'msg-them'}"><div class="msg-sender">${isMe?'You':m.sender_name}</div>${m.content}</div>`;
+}
+
+window.sendMsg = async fid => {
+  const inp = el('chat-input');
+  const content = inp.value.trim();
+  if (!content) return;
+  inp.value = '';
+  if (S.socket?.connected) {
+    S.socket.emit('chat:message', { friendId: fid, content });
+  } else {
+    try {
+      const msg = await api('POST', `/api/friends/messages/${fid}`, { content });
+      const cb = el('chat-messages');
+      if (cb) { cb.insertAdjacentHTML('beforeend', msgHTML(msg, S.user.id)); cb.scrollTop = cb.scrollHeight; }
+    } catch (e) { toast(e.message, 'error'); }
+  }
+};
+
+// ═══ PAGE: PROFILE ════════════════════════════════════════════════════════════════
+async function renderProfile(id) {
+  const uid = id || S.user.id;
+  const isMe = uid === S.user.id;
+  app().innerHTML = `<div class="page"><div class="spinner"></div></div>`;
+  try {
+    const [pd, td] = await Promise.all([api('GET', `/api/game/profile/${uid}`), api('GET', `/api/titles/user/${uid}`)]);
+    const u = pd.user;
+    const rank = getRank(u.rank_points);
+    const lvl = Math.floor(u.xp/1000)+1;
+    const wr = u.wins+u.losses > 0 ? Math.round(u.wins/(u.wins+u.losses)*100) : 0;
+    const rc = roleColor(u.role);
+    const activeT = td.unlocked.find(t=>t.id===td.activeTitle);
+
+    app().innerHTML = `<div class="page">
+      <div class="user-header">
+        <div class="user-avatar-lg" style="background:${rank.color}">${u.username[0].toUpperCase()}</div>
+        <div>
+          <div class="flex" style="flex-wrap:wrap;gap:6px">
+            <h2 style="font-family:'Cinzel',serif;color:var(--gold)">${u.username}</h2>
+            ${rc?`<span style="color:${rc};font-weight:700">${u.role.toUpperCase()}</span>`:''}
+            ${activeT ? titleBadge(activeT) : ''}
+          </div>
+          <div class="flex" style="margin-top:4px"><span style="color:${rank.color}">${rank.icon} ${rank.name}</span><span style="color:#c4956c;font-size:.85rem">${u.rank_points} RP</span></div>
+          <div style="font-size:.8rem;color:#c4956c">Level ${lvl} • Joined ${new Date(u.created_at).toLocaleDateString()}</div>
+        </div>
+        ${isMe ? `<button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="go('play')">▶ Play</button>` : ''}
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchPTab(this,'stats')">📊 Stats</button>
+        <button class="tab-btn" onclick="switchPTab(this,'titles')">🏅 Titles</button>
+      </div>
+
+      <div id="ptab-content">
+        <div class="profile-stats">
+          <div class="ps-card"><div class="ps-icon">⭐</div><div class="ps-val">${u.xp.toLocaleString()}</div><div class="ps-label">Total XP</div></div>
+          <div class="ps-card"><div class="ps-icon">🪙</div><div class="ps-val">${u.coins.toLocaleString()}</div><div class="ps-label">Coins</div></div>
+          <div class="ps-card"><div class="ps-icon">📚</div><div class="ps-val">${u.levels_completed}</div><div class="ps-label">Levels Done</div></div>
+          <div class="ps-card"><div class="ps-icon">⚔️</div><div class="ps-val">${wr}%</div><div class="ps-label">Win Rate</div><div style="font-size:.78rem;color:#888">${u.wins}W / ${u.losses}L</div></div>
+        </div>
+        <div class="card">
+          <h3 style="color:#7a3b10;margin-bottom:12px">Recent Levels</h3>
+          ${pd.recentLevels.length ? `<table class="lb-table"><thead><tr><th>Level</th><th>Score</th><th>Words</th><th>Time</th><th>Date</th></tr></thead><tbody>
+            ${pd.recentLevels.map(l=>`<tr><td><span class="badge badge-brown">Lvl ${l.level_number}</span></td><td>⭐ ${l.score.toLocaleString()}</td><td>📚 ${l.words_found}</td><td>⏱ ${Math.floor(l.time_taken/60)}:${String(l.time_taken%60).padStart(2,'0')}</td><td>${new Date(l.completed_at).toLocaleDateString()}</td></tr>`).join('')}
+          </tbody></table>` : '<p style="color:#ccc;text-align:center;padding:16px">No levels yet</p>'}
+        </div>
+      </div>
+    </div>`;
+
+    // Store title data for tab switching
+    window._profileTitles = td;
+    window._profileIsMe = isMe;
+
+    if (isMe) {
+      // Check for new titles
+      try {
+        const r = await api('GET', '/api/titles/my');
+        if (r.newTitles?.length) r.newTitles.forEach(t => toast(`🏅 Title unlocked: ${t.icon} ${t.name}!`, 'gold', 5000));
+      } catch {}
+    }
+  } catch (e) { app().innerHTML = `<p style="color:red">${e.message}</p>`; }
+}
+
+window.switchPTab = (btn, tab) => {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab==='stats') {
+    const u = S.user;
+    const wr = u.wins+u.losses>0?Math.round(u.wins/(u.wins+u.losses)*100):0;
+  }
+  if (tab==='titles') renderTitlesTab();
+};
+
+async function renderTitlesTab() {
+  const td = window._profileTitles;
+  const isMe = window._profileIsMe;
+  if (!td) return;
+  const unlockedIds = new Set(td.unlocked.map(t=>t.id));
+  try {
+    const all = await api('GET', '/api/titles/all');
+    const categories = [...new Set(all.map(t=>t.category))];
+    let html = '';
+    if (td.activeTitle) {
+      const at = td.unlocked.find(t=>t.id===td.activeTitle);
+      if (at) html += `<div style="text-align:center;margin-bottom:20px"><p style="color:#c4956c;font-size:.85rem">Active Title</p>${titleBadge(at)}</div>`;
+    }
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">`;
+    for (const t of all) {
+      const owned = unlockedIds.has(t.id);
+      const c = RARITY_COLOR[t.rarity]||'#888';
+      const isActive = td.activeTitle===t.id;
+      html += `<div style="background:${owned?'#fff':'#f8f0e8'};border-radius:10px;padding:12px;border:2px solid ${owned?c:'#e0d0c0'};opacity:${owned?1:.6}">
+        <div style="font-size:1.4rem">${owned?t.icon:'🔒'}</div>
+        <div style="font-weight:700;font-size:.85rem;color:${owned?c:'#aaa'}">${owned?t.name:'???'}</div>
+        <div style="font-size:.75rem;color:#888;margin:4px 0">${owned?t.desc:'Locked'}</div>
+        <div style="font-size:.72rem;color:${c};font-weight:600;text-transform:uppercase">${t.rarity}</div>
+        ${owned&&isMe ? `<button class="btn btn-sm" style="margin-top:6px;${isActive?'background:#27ae60;color:#fff':'background:#f0e8d8;color:#7a3b10'}" onclick="equipTitle('${isActive?null:t.id}')">${isActive?'✓ Active':'Equip'}</button>` : ''}
+      </div>`;
+    }
+    html += '</div>';
+    el('ptab-content').innerHTML = html;
+  } catch (e) { el('ptab-content').innerHTML = `<p style="color:red">${e.message}</p>`; }
+}
+
+window.equipTitle = async titleId => {
+  try {
+    await api('POST', '/api/titles/equip', { titleId: titleId==='null'?null:titleId });
+    if (window._profileTitles) window._profileTitles.activeTitle = titleId==='null'?null:titleId;
+    toast(titleId==='null'?'Title unequipped':'Title equipped!', 'success');
+    renderTitlesTab();
+  } catch (e) { toast(e.message, 'error'); }
+};
+
+// ═══ PAGE: ADMIN ════════════════════════════════════════════════════════════════
+async function renderAdmin() {
+  if (!['mod','admin','owner'].includes(S.user.role)) { go('home'); return; }
+  app().innerHTML = `<div class="page"><h1 class="page-title">🛡️ Admin Panel</h1>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchAdmTab(this,'overview')">Overview</button>
+      <button class="tab-btn" onclick="switchAdmTab(this,'users')">Users</button>
+    </div>
+    <div id="adm-content"><div class="spinner"></div></div>
+  </div>`;
+  loadAdmOverview();
+}
+
+window.switchAdmTab = (btn, tab) => {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab==='overview') loadAdmOverview();
+  else loadAdmUsers();
+};
+
+async function loadAdmOverview() {
+  try {
+    const d = await api('GET', '/api/admin/stats');
+    el('adm-content').innerHTML = `
+      <div class="grid-4" style="margin-bottom:20px">
+        <div class="stat-card"><div class="stat-icon">👤</div><div class="stat-val">${d.totalUsers}</div><div class="stat-label">Total Users</div></div>
+        <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-val">${d.totalLevels}</div><div class="stat-label">Levels Played</div></div>
+        <div class="stat-card"><div class="stat-icon">⚔️</div><div class="stat-val">${d.totalMatches}</div><div class="stat-label">Ranked Matches</div></div>
+        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-val">${d.totalMessages}</div><div class="stat-label">Messages</div></div>
+      </div>
+      <div class="card"><h3 style="color:#7a3b10;margin-bottom:12px">Recent Registrations</h3>
+        <table class="lb-table"><thead><tr><th>Username</th><th>Role</th><th>Joined</th></tr></thead><tbody>
+          ${d.recentUsers.map(u=>`<tr><td>${u.username}</td><td><span style="color:${roleColor(u.role)||'#888'}">${u.role}</span></td><td>${new Date(u.created_at).toLocaleDateString()}</td></tr>`).join('')}
+        </tbody></table>
+      </div>`;
+  } catch (e) { el('adm-content').innerHTML = `<p style="color:red">${e.message}</p>`; }
+}
+
+async function loadAdmUsers(q='') {
+  try {
+    let users = await api('GET', '/api/admin/users');
+    if (q) users = users.filter(u => u.username.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase()));
+    el('adm-content').innerHTML = `<div class="flex" style="margin-bottom:12px">
+      <input placeholder="Search users..." value="${q}" oninput="loadAdmUsers(this.value)" style="max-width:300px">
+    </div>
+    <div class="card" style="overflow-x:auto"><table class="lb-table"><thead><tr><th>User</th><th>Role</th><th>XP</th><th>Coins</th><th>RP</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+      ${users.map(u=>`<tr>
+        <td><a href="#profile/${u.id}" style="color:#7a3b10;font-weight:600">${u.username}</a><br><span style="font-size:.75rem;color:#aaa">${u.email}</span></td>
+        <td><span style="color:${roleColor(u.role)||'#333'}">${u.role}</span></td>
+        <td>${u.xp.toLocaleString()}</td>
+        <td>${u.coins.toLocaleString()}</td>
+        <td>${u.rank_points}</td>
+        <td>${u.is_banned?'<span style="color:red">Banned</span>':'<span style="color:green">Active</span>'}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="manageUser(${JSON.stringify(u).replace(/"/g,'&quot;')})">Manage</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+  } catch (e) { el('adm-content').innerHTML = `<p style="color:red">${e.message}</p>`; }
+}
+
+window.manageUser = u => {
+  const me = S.user;
+  const ROLES = { user:0, mod:1, admin:2, owner:3 };
+  const canEdit = ROLES[me.role] > ROLES[u.role] && u.role !== 'owner';
+  modal(`Manage: ${u.username}`, `
+    <p><strong>Email:</strong> ${u.email}</p>
+    <p><strong>Role:</strong> ${u.role} | <strong>XP:</strong> ${u.xp} | <strong>Coins:</strong> ${u.coins}</p>
+    ${canEdit && ROLES[me.role]>=2 ? `<div class="form-group mt"><label>Role</label>
+      <select id="mu-role"><option ${u.role==='user'?'selected':''} value="user">User</option><option ${u.role==='mod'?'selected':''} value="mod">Mod</option>${ROLES[me.role]>=3?`<option ${u.role==='admin'?'selected':''} value="admin">Admin</option>`:''}</select>
+      <button class="btn btn-ghost btn-sm mt" onclick="setRole(${u.id})">Set Role</button></div>` : ''}
+    ${canEdit && ROLES[me.role]>=2 ? `<div class="form-group mt"><label>Adjust Coins</label>
+      <input id="mu-coins" type="number" placeholder="e.g. 1000 or -500">
+      <button class="btn btn-ghost btn-sm mt" onclick="adjCoins(${u.id})">Apply</button></div>
+    <div class="form-group mt"><label>Adjust XP</label>
+      <input id="mu-xp" type="number" placeholder="e.g. 1000 or -500">
+      <button class="btn btn-ghost btn-sm mt" onclick="adjXP(${u.id})">Apply</button></div>` : ''}
+    ${canEdit ? `<div class="flex mt">
+      <button class="btn ${u.is_banned?'btn-primary':'btn-danger'} btn-sm" onclick="banUser(${u.id},${!u.is_banned})">${u.is_banned?'Unban':'Ban'}</button>
+      ${ROLES[me.role]>=3?`<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">Delete</button>`:''}
+    </div>` : '<p style="color:#aaa;margin-top:12px">You cannot modify this user.</p>'}
+  `);
+};
+
+window.setRole = async id => {
+  try { await api('PATCH',`/api/admin/users/${id}/role`,{role:el('mu-role').value}); toast('Role updated','success'); closeModal(); loadAdmUsers(); } catch(e){toast(e.message,'error');}
+};
+window.adjCoins = async id => {
+  const v=+el('mu-coins').value;
+  if(isNaN(v))return;
+  try{await api('PATCH',`/api/admin/users/${id}/coins`,{amount:v});toast('Coins updated','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}
+};
+window.adjXP = async id => {
+  const v=+el('mu-xp').value;
+  if(isNaN(v))return;
+  try{await api('PATCH',`/api/admin/users/${id}/xp`,{amount:v});toast('XP updated','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}
+};
+window.banUser = async (id,ban) => {
+  try{await api('PATCH',`/api/admin/users/${id}/ban`,{banned:ban});toast(ban?'User banned':'User unbanned','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}
+};
+window.deleteUser = async id => {
+  if(!confirm('Delete this user permanently?'))return;
+  try{await api('DELETE',`/api/admin/users/${id}`);toast('User deleted','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}
+};
+
+// ═══ ROUTER ═══════════════════════════════════════════════════════════════════
+function logout() {
+  S.user = null; S.token = null;
+  localStorage.removeItem('tok');
+  S.socket?.disconnect(); S.socket = null;
+  go('login');
+}
+
+async function route() {
+  if (S.token && !S.user) {
+    try { S.user = await api('GET', '/api/game/me'); connectSocket(); }
+    catch { S.token = null; localStorage.removeItem('tok'); }
+  }
+  const hash = location.hash.slice(1) || 'home';
+  const [page, ...params] = hash.split('/');
+  if (!S.user && page !== 'login' && page !== 'register') return go('login');
+  renderNav();
+  document.removeEventListener('keydown', onKey);
+  const fns = {
+    login: renderLogin, register: renderRegister, home: renderHome,
+    play: () => renderGame(+params[0]||null), ranked: renderRanked,
+    leaderboard: renderLeaderboard, friends: renderFriends,
+    profile: () => renderProfile(+params[0]||S.user?.id),
+    admin: renderAdmin,
+  };
+  (fns[page] || (() => go('home')))();
+}
+
+// ═══ GRID CLICK DELEGATION ════════════════════════════════════════════════════
+document.body.addEventListener('click', e => {
+  const cell = e.target.closest('[data-r]');
+  if (cell && G.data) selectCell(+cell.dataset.r, +cell.dataset.c);
+});
+
+// ═══ INIT ═════════════════════════════════════════════════════════════════════
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>
