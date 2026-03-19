@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Word Legends</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0701;--card:#fef8ee;--border:#c8956c;--primary:#8b3a0f;--ph:#6b2d0a;--gold:#e8b420;--cream:#fef8ee;--text:#180e00;--muted:#8a5c3a;--danger:#e74c3c;--success:#27ae60;--cell:32px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Lato',sans-serif;background:var(--bg);background-image:radial-gradient(ellipse at 20% 20%,#1a0900 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,#0f0500 0%,transparent 60%);color:var(--cream);min-height:100vh}
+h1,h2,h3,.brand{font-family:'Cinzel',serif}
+a{color:inherit;text-decoration:none}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(180deg,#1a0a00 0%,#0f0700 100%);border-bottom:2px solid #5c2d00;height:56px;display:flex;align-items:center;padding:0 16px;gap:12px;box-shadow:0 2px 20px rgba(0,0,0,.6)}
+.brand{font-size:1.1rem;color:var(--gold);margin-right:6px;white-space:nowrap;text-shadow:0 0 20px rgba(232,180,32,.3)}
+.nav-link{padding:5px 10px;border-radius:6px;font-size:.82rem;color:#c8a070;transition:.2s;white-space:nowrap}
+.nav-link:hover,.nav-link.active{background:rgba(232,180,32,.15);color:var(--gold)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.nav-stat{font-size:.78rem;color:#c4956c;background:rgba(255,255,255,.05);padding:3px 8px;border-radius:10px}
+.nav-user{position:relative}
+.nav-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;cursor:pointer;border:2px solid var(--gold);gap:2px;background:rgba(232,180,32,.1)}
+.nav-dropdown{display:none;position:absolute;right:0;top:34px;background:#1a0c02;border:1px solid #5c2d00;border-radius:10px;min-width:160px;padding:6px 0;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.nav-user:hover .nav-dropdown,.nav-dropdown.open{display:block}
+.nav-dd-item{display:block;padding:8px 14px;font-size:.83rem;color:#c8a070;cursor:pointer;transition:.15s}
+.nav-dd-item:hover{background:rgba(232,180,32,.1);color:var(--gold)}
+#app{margin-top:56px;padding:20px;max-width:1100px;margin-left:auto;margin-right:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'Lato',sans-serif;font-size:.9rem;font-weight:600;transition:.18s;letter-spacing:.02em}
+.btn-primary{background:linear-gradient(135deg,#9b4210,#7a3b10);color:var(--cream);box-shadow:0 2px 8px rgba(139,58,15,.3)}.btn-primary:hover{background:linear-gradient(135deg,#b04d12,#8b3a10);box-shadow:0 4px 14px rgba(139,58,15,.4)}
+.btn-gold{background:linear-gradient(135deg,#f0c030,#d4a017);color:#1a0f00;box-shadow:0 2px 8px rgba(212,160,23,.3)}.btn-gold:hover{background:linear-gradient(135deg,#f5c832,#dea81a);box-shadow:0 4px 14px rgba(212,160,23,.45)}
+.btn-ghost{background:rgba(255,255,255,.04);color:#c8a070;border:1px solid #5c3300}.btn-ghost:hover{background:rgba(232,180,32,.1);border-color:var(--gold);color:var(--gold)}
+.btn-danger{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;box-shadow:0 2px 8px rgba(231,76,60,.25)}.btn-danger:hover{box-shadow:0 4px 14px rgba(231,76,60,.4)}
+.btn-sm{padding:5px 12px;font-size:.8rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.card{background:var(--card);border-radius:14px;padding:20px;color:var(--text);box-shadow:0 4px 24px rgba(0,0,0,.18),0 1px 0 rgba(255,255,255,.6) inset;border:1px solid rgba(200,149,108,.2)}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:700px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+.form-group{margin-bottom:14px}
+label{display:block;margin-bottom:5px;font-size:.83rem;font-weight:600;color:#b8824a}
+input,select{width:100%;padding:9px 13px;background:#1e0f00;border:1px solid #5c3300;border-radius:8px;color:var(--cream);font-family:'Lato',sans-serif;font-size:.88rem;outline:none;transition:.2s}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,180,32,.12)}
+.form-error{color:var(--danger);font-size:.8rem;margin-top:4px}
+.auth-box{max-width:400px;margin:50px auto}
+.auth-box h2{text-align:center;color:var(--gold);margin-bottom:20px;font-size:1.7rem}
+.stat-card{background:var(--card);border-radius:14px;padding:18px;text-align:center;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,.15),0 1px 0 rgba(255,255,255,.6) inset;border:1px solid rgba(200,149,108,.2)}
+.stat-icon{font-size:1.8rem;margin-bottom:6px}
+.stat-val{font-size:1.6rem;font-weight:700;color:var(--primary)}
+.stat-label{font-size:.8rem;color:var(--muted);margin-top:3px}
+
+/* WORD SEARCH */
+.ws-wrap{touch-action:none;user-select:none;-webkit-user-select:none;display:inline-block}
+.ws-grid{display:inline-grid;gap:3px;padding:6px;background:linear-gradient(135deg,#2a1200,#3d1a00);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,200,80,.1)}
+.ws-cell{width:var(--cell);height:var(--cell);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;border-radius:5px;cursor:pointer;background:#fff;color:#1a0f00;transition:background .06s,transform .06s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.ws-cell.sel{background:#6c5ce7;color:#fff;transform:scale(1.05);box-shadow:0 2px 8px rgba(108,92,231,.5)}
+.word-list{display:flex;flex-wrap:wrap;gap:8px;padding:0}
+.word-chip{padding:5px 12px;border-radius:20px;font-size:.82rem;font-weight:700;border:2px solid;transition:.25s;cursor:default}
+.word-chip.found{text-decoration:line-through;opacity:.65}
+
+/* LEADERBOARD */
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{padding:9px 11px;text-align:left;font-size:.76rem;color:var(--muted);text-transform:uppercase;border-bottom:2px solid #e8d5c0;letter-spacing:.05em}
+.lb-table td{padding:9px 11px;border-bottom:1px solid #f0e4d4;font-size:.86rem;color:var(--text)}
+.lb-table tr:hover td{background:rgba(139,58,15,.06)}
+.title-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.73rem;font-weight:700;border:1.5px solid currentColor;letter-spacing:.02em}
+
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:18px;border-bottom:2px solid #3a1800;flex-wrap:wrap}
+.tab-btn{padding:7px 16px;background:transparent;border:none;border-bottom:3px solid transparent;color:#9a7050;cursor:pointer;font-family:'Lato',sans-serif;font-size:.86rem;font-weight:600;transition:.18s;margin-bottom:-2px}
+.tab-btn:hover{color:#c8a070}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* CHAT */
+.chat-box{height:300px;overflow-y:auto;background:#160900;border-radius:10px;padding:10px;margin-bottom:10px;display:flex;flex-direction:column;gap:6px;border:1px solid #3a1800}
+.msg-bubble{max-width:74%;padding:8px 12px;border-radius:12px;font-size:.83rem}
+.msg-me{align-self:flex-end;background:linear-gradient(135deg,#9b4210,#7a3b10);color:var(--cream);border-bottom-right-radius:3px}
+.msg-them{align-self:flex-start;background:#2a1200;color:#d4b896;border-bottom-left-radius:3px;border:1px solid #3a1800}
+.msg-sender{font-size:.7rem;color:var(--muted);margin-bottom:2px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(2px)}
+.modal-box{background:var(--card);border-radius:16px;max-width:480px;width:100%;max-height:82vh;overflow-y:auto;color:var(--text);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #e8d5c0}
+.modal-header h3{font-family:'Cinzel',serif;color:var(--primary)}
+.modal-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);transition:.15s}.modal-close:hover{color:var(--danger)}
+.modal-body{padding:18px}
+.modal-footer{padding:10px 18px;border-top:1px solid #e8d5c0;display:flex;gap:8px;justify-content:flex-end}
+
+/* TOAST */
+#toasts{position:fixed;top:64px;right:14px;z-index:1000;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:#1a0b02;border:1px solid #5c2d00;border-radius:10px;padding:10px 14px;font-size:.83rem;color:var(--cream);animation:tin .3s;max-width:300px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.toast.gold{border-color:var(--gold);background:#1e1200;color:var(--gold)}
+.toast.success{border-color:var(--success);background:#0a1f0a}
+.toast.error{border-color:var(--danger);background:#1f0a0a}
+@keyframes tin{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+/* EVENTS */
+#events-bar{display:none;position:fixed;top:56px;left:0;right:0;z-index:290;background:rgba(10,5,0,.97);border-bottom:1px solid #4a2200;padding:5px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:34px;backdrop-filter:blur(4px)}
+#events-bar:empty{display:none}
+.ev-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700;border:1px solid;animation:popIn .3s ease;white-space:nowrap}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.ev-label{font-size:.72rem;color:#a08060;white-space:nowrap}
+
+/* ANNOUNCEMENT */
+#announcement-banner{display:none;position:fixed;top:56px;left:0;right:0;z-index:300;background:linear-gradient(135deg,#8b3a0f,#e8b420);color:#fff;padding:12px 20px;text-align:center;font-size:.92rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:slideDown .4s ease}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+#announcement-banner .ann-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;opacity:.8}
+#announcement-banner .ann-close:hover{opacity:1}
+
+/* MISC */
+.spinner{width:30px;height:30px;border:3px solid #3a1800;border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.page-title{font-size:1.5rem;color:var(--gold);margin-bottom:18px;text-shadow:0 0 30px rgba(232,180,32,.2)}
+.badge-brown{background:#5c3300;color:#fde8c8;padding:2px 7px;border-radius:9px;font-size:.73rem;font-weight:700}
+.hero{text-align:center;padding:32px 16px}
+.hero h1{font-size:2.2rem;color:var(--gold);margin-bottom:6px;text-shadow:0 0 40px rgba(232,180,32,.25)}
+.action-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.action-card{background:var(--card);border-radius:14px;padding:18px;cursor:pointer;transition:.2s;color:var(--text);border:2px solid transparent;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+.action-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 28px rgba(232,180,32,.15)}
+.action-card .ac-icon{font-size:1.8rem;margin-bottom:6px}
+.action-card h3{font-size:.95rem;margin-bottom:3px}
+.action-card p{font-size:.8rem;color:var(--muted)}
+.score-bar-wrap{background:#160a00;border-radius:10px;padding:12px;margin-bottom:14px;border:1px solid #3a1800}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.score-bar{height:9px;background:#2a1200;border-radius:5px;overflow:hidden}
+.score-fill{height:100%;background:linear-gradient(90deg,#e8b420,#f0c840);transition:.5s;box-shadow:0 0 8px rgba(232,180,32,.4)}
+.timer-big{font-size:2.4rem;font-weight:700;color:var(--gold);font-family:'Cinzel',serif;text-shadow:0 0 20px rgba(232,180,32,.3)}
+.friends-list{display:flex;flex-direction:column;gap:6px}
+.friend-row{display:flex;align-items:center;gap:9px;padding:10px;background:#fff;border-radius:10px;cursor:pointer;transition:.18s;color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.online-dot{width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 6px rgba(34,197,94,.5)}
+.offline-dot{width:9px;height:9px;border-radius:50%;background:#d1d5db;flex-shrink:0}
+.friend-row:hover{background:#fef3e2;transform:translateX(2px)}
+.friend-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#9b4210,#7a3b10);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--cream);flex-shrink:0}
+.profile-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:18px}
+.ps-card{background:var(--card);border-radius:10px;padding:12px;text-align:center;color:var(--text);box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.ps-icon{font-size:1.5rem;margin-bottom:3px}
+.ps-val{font-size:1.3rem;font-weight:700;color:var(--primary)}
+.ps-label{font-size:.76rem;color:var(--muted)}
+.progress-wrap{background:#e0cdb0;border-radius:4px;height:6px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),#f0c840)}
+
+/* HAMBURGER NAV */
+.nav-ham{display:none;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;padding:6px;background:none;border:none}
+.nav-ham span{display:block;width:22px;height:2px;background:var(--cream);border-radius:2px;transition:.25s}
+#mobile-menu{display:none;position:fixed;top:56px;left:0;right:0;z-index:310;background:rgba(15,8,0,.98);border-bottom:1px solid #3d2000;flex-direction:column;max-height:calc(100vh - 56px);overflow-y:auto}
+#mobile-menu.open{display:flex}
+#mobile-menu a,#mobile-menu span.mm-item{display:block;padding:13px 20px;color:#d4b896;font-size:.95rem;border-bottom:1px solid #2a1400;cursor:pointer}
+#mobile-menu a:active,#mobile-menu span.mm-item:active{background:#3d2000}
+
+/* MOBILE */
+@media(max-width:700px){
+  :root{--cell:26px}
+  .nav-link{display:none}
+  .nav-ham{display:flex}
+  .nav-stat{display:none}
+  .brand{font-size:.95rem}
+  #app{padding:10px}
+  .hero{padding:22px 10px}
+  .hero h1{font-size:1.45rem}
+  .hero p{font-size:.9rem}
+  .page-title{font-size:1.15rem}
+  .timer-big{font-size:1.7rem}
+  .card{padding:14px;overflow-x:auto}
+  .stat-val{font-size:1.2rem}
+  .chat-box{height:200px}
+  .modal-box{max-height:92vh;margin:4px}
+  .score-row{flex-direction:column;align-items:center;gap:4px;text-align:center}
+  .score-bar{margin-top:6px}
+  .lb-table{font-size:.78rem}
+  .lb-table th,.lb-table td{padding:7px 6px}
+  .ws-wrap{display:block;width:100%;overflow-x:auto}
+  .ws-cell{font-size:11px}
+  .word-chip{font-size:.75rem;padding:4px 8px}
+  .action-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .action-card{padding:14px}
+  .tab-btn{padding:6px 10px;font-size:.8rem}
+  .btn{padding:8px 14px;font-size:.85rem}
+  .btn-sm{padding:4px 9px;font-size:.75rem}
+  .friend-row{padding:7px}
+  .profile-stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:400px){
+  :root{--cell:22px}
+  .ws-cell{font-size:10px}
+  .hero h1{font-size:1.2rem}
+}
+</style>
+</head>
+<body>
+<nav id="nav"></nav>
+<div id="events-bar"></div>
+<div id="announcement-banner"><span id="ann-text"></span><button class="ann-close" onclick="document.getElementById('announcement-banner').style.display='none'">✕</button></div>
+<main id="app"></main>
+<div id="toasts"></div>
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script>
+// ═══ STATE ════════════════════════════════════════════════════════════════════
+const S = { user: null, token: localStorage.getItem('tok'), socket: null, chatFriendId: null };
+let activeEvents = {}; // eventId -> event data
+
+// ═══ DEVICE FINGERPRINT ═══════════════════════════════════════════════════════
+function getDeviceFp() {
+  let fp = localStorage.getItem('_dfp');
+  if (fp) return fp;
+  try {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'top'; ctx.font = '14px Arial';
+    ctx.fillStyle = '#f60'; ctx.fillRect(125,1,62,20);
+    ctx.fillStyle = '#069'; ctx.fillText('wl_fp',2,15);
+    const cv = canvas.toDataURL().slice(-32);
+    const raw = [navigator.userAgent.slice(0,60),screen.width,screen.height,screen.colorDepth,navigator.language,new Date().getTimezoneOffset(),navigator.hardwareConcurrency||0,cv].join('|');
+    let h = 5381;
+    for (let i=0;i<raw.length;i++) h=((h<<5)+h)^raw.charCodeAt(i);
+    fp = (h>>>0).toString(36);
+  } catch { fp = Math.random().toString(36).slice(2); }
+  localStorage.setItem('_dfp', fp);
+  return fp;
+}
+
+// ═══ API ═════════════════════════════════════════════════════════════════════
+async function api(method, url, body) {
+  const r = await fetch(url, {
+    method,
+    headers: { 'Content-Type':'application/json', ...(S.token?{Authorization:`Bearer ${S.token}`}:{}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!r.ok) {
+    const e = await r.json().catch(()=>({error:'Error'}));
+    if (e.code==='IP_BANNED') { renderBanned('ip'); throw new Error(e.error); }
+    throw new Error(e.error||'Request failed');
+  }
+  return r.json();
+}
+
+// ═══ TOAST ════════════════════════════════════════════════════════════════════
+function toast(msg, type='', dur=3500) {
+  const d = document.createElement('div');
+  d.className = `toast ${type}`; d.textContent = msg;
+  document.getElementById('toasts').append(d);
+  setTimeout(() => d.remove(), dur);
+}
+
+// ═══ MODAL ════════════════════════════════════════════════════════════════════
+function modal(title, body, footer='') {
+  closeModal();
+  const o = document.createElement('div');
+  o.className='modal-overlay'; o.id='modal';
+  o.innerHTML=`<div class="modal-box"><div class="modal-header"><h3>${title}</h3><button class="modal-close" onclick="closeModal()">✕</button></div><div class="modal-body">${body}</div>${footer?`<div class="modal-footer">${footer}</div>`:''}</div>`;
+  o.addEventListener('click', e=>{ if(e.target===o) closeModal(); });
+  document.body.append(o);
+}
+function closeModal() { document.getElementById('modal')?.remove(); }
+
+// ═══ EVENTS ═══════════════════════════════════════════════════════════════════
+const EV_COLORS = {lucky_find:'#27ae60',coin_shower:'#2980b9',word_rush:'#8e44ad',small_boost:'#16a085',xp_storm:'#e67e22',gold_fever:'#d4a017',word_blitz:'#e74c3c',double_down:'#9b59b6',mega_event:'#f1c40f',score_surge:'#1abc9c'};
+
+function renderEventsBar() {
+  const bar = el('events-bar');
+  const evs = Object.values(activeEvents);
+  if (!evs.length) { bar.style.display='none'; el('app').style.marginTop='56px'; return; }
+  bar.style.display='flex';
+  const now = Date.now();
+  bar.innerHTML = `<span class="ev-label">🎉 Active:</span>`+evs.map(e=>{
+    const mins = Math.max(0,Math.ceil((e.endsAt-now)/60000));
+    const c = EV_COLORS[e.id]||'#d4a017';
+    return `<span class="ev-chip" style="color:${c};border-color:${c};background:${c}18">${e.icon} ${e.name} <span style="opacity:.7">${e.desc} · ${mins}m</span></span>`;
+  }).join('');
+  el('app').style.marginTop = (56+bar.offsetHeight)+'px';
+}
+
+async function loadEvents() {
+  try {
+    const evs = await api('GET','/api/events');
+    activeEvents = {};
+    evs.forEach(e => activeEvents[e.id]=e);
+    renderEventsBar();
+  } catch {}
+}
+
+// ═══ UTILS ════════════════════════════════════════════════════════════════════
+const app = () => document.getElementById('app');
+const el = id => document.getElementById(id);
+function go(hash) { location.hash = hash; }
+function getRank(rp) {
+  if (rp<1100) return {name:'Bronze',color:'#cd7f32',icon:'🥉'};
+  if (rp<1300) return {name:'Silver',color:'#a8a9ad',icon:'🥈'};
+  if (rp<1600) return {name:'Gold',color:'#d4a017',icon:'🥇'};
+  if (rp<2000) return {name:'Platinum',color:'#00b4d8',icon:'💠'};
+  if (rp<2500) return {name:'Diamond',color:'#9b59b6',icon:'💎'};
+  return {name:'Master',color:'#e74c3c',icon:'👑'};
+}
+function roleColor(r) { return {owner:'#e74c3c','co-owner':'#ff6b35',admin:'#9b59b6',mod:'#2980b9'}[r]||''; }
+const RARITY_COLOR = {common:'#95a5a6',uncommon:'#27ae60',rare:'#2980b9',epic:'#8e44ad',legendary:'#e74c3c'};
+function titleBadge(t) {
+  if (!t) return '';
+  const c = RARITY_COLOR[t.rarity]||'#888';
+  return `<span class="title-badge" style="color:${c};border-color:${c}">${t.icon} ${t.name}</span>`;
+}
+
+// ═══ WORD BANK ════════════════════════════════════════════════════════════════
+const WB = [
+  ['CAT',1],['DOG',1],['SUN',1],['MOON',1],['FISH',1],['BIRD',1],['TREE',1],['RAIN',1],
+  ['FIRE',1],['GOLD',1],['BOOK',1],['CITY',1],['HAND',1],['LAKE',1],['ROAD',1],['SNOW',1],
+  ['FARM',1],['WIND',1],['ROCK',1],['SHIP',1],['DRUM',1],['FROG',1],['KITE',1],['LION',1],
+  ['APPLE',2],['BEACH',2],['CLOUD',2],['DREAM',2],['EAGLE',2],['FLAME',2],['GRAPE',2],
+  ['HEART',2],['JEWEL',2],['LEMON',2],['MUSIC',2],['NIGHT',2],['OCEAN',2],['PIANO',2],
+  ['QUEEN',2],['RIVER',2],['STORM',2],['TIGER',2],['VOICE',2],['WATER',2],['CRANE',2],
+  ['DANCE',2],['EARTH',2],['FROST',2],['GIANT',2],['HONEY',2],['LIGHT',2],['NORTH',2],
+  ['SWORD',2],['ARROW',2],['BRAVE',2],['CROWN',2],['FLUTE',2],['GROVE',2],['HAVEN',2],
+  ['ANCIENT',3],['BALANCE',3],['CAPTAIN',3],['DIAMOND',3],['ECLIPSE',3],['FANTASY',3],
+  ['GRAVITY',3],['HISTORY',3],['IMAGINE',3],['JUSTICE',3],['KINGDOM',3],['LANTERN',3],
+  ['MYSTERY',3],['NETWORK',3],['OCTOBER',3],['PYRAMID',3],['QUANTUM',3],['RAINBOW',3],
+  ['SCIENCE',3],['THUNDER',3],['UNICORN',3],['WEATHER',3],['ALCHEMY',3],['DESTINY',3],
+  ['FORTUNE',3],['HARVEST',3],['JOURNEY',3],['TRIUMPH',3],['BLOSSOM',3],['CRYSTAL',3],
+];
+
+function getWords(level) {
+  const count = Math.min(5 + Math.floor(level * 0.6), 14);
+  const hardR = Math.min(0.1 + level * 0.05, 0.55);
+  const medR = 0.3;
+  const shuffle = a => [...a].sort(()=>Math.random()-.5);
+  const easy = shuffle(WB.filter(w=>w[1]===1));
+  const med  = shuffle(WB.filter(w=>w[1]===2));
+  const hard = shuffle(WB.filter(w=>w[1]===3));
+  const hc = Math.floor(count*hardR), mc = Math.floor(count*medR), ec = count-hc-mc;
+  return [...hard.slice(0,hc),...med.slice(0,mc),...easy.slice(0,ec)].slice(0,count).map(([w])=>w);
+}
+
+// ═══ WORD SEARCH GENERATOR ════════════════════════════════════════════════════
+const DIRS = [[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const WORD_COLORS = ['#e74c3c','#2980b9','#27ae60','#8e44ad','#e67e22','#1abc9c','#c0392b','#d4a017','#16a085','#6c3483','#b7950b','#1a5276','#145a32','#7b241c'];
+
+function generateWordSearch(words) {
+  const SIZE = Math.max(12, Math.ceil(Math.sqrt(words.join('').length * 4)));
+  const grid = Array.from({length:SIZE},()=>Array(SIZE).fill(''));
+  const placed = [];
+
+  const shuffle = a => [...a].sort(()=>Math.random()-.5);
+
+  for (const word of words) {
+    let done = false;
+    const dirs = shuffle(DIRS);
+    const positions = shuffle(Array.from({length:SIZE*SIZE},(_,i)=>[Math.floor(i/SIZE),i%SIZE]));
+    outer: for (const [r,c] of positions) {
+      for (const [dr,dc] of dirs) {
+        // Check fits
+        let ok = true;
+        for (let i=0;i<word.length;i++) {
+          const nr=r+dr*i, nc=c+dc*i;
+          if (nr<0||nr>=SIZE||nc<0||nc>=SIZE) { ok=false; break; }
+          if (grid[nr][nc] && grid[nr][nc]!==word[i]) { ok=false; break; }
+        }
+        if (!ok) continue;
+        // Place
+        for (let i=0;i<word.length;i++) grid[r+dr*i][c+dc*i] = word[i];
+        placed.push({word, row:r, col:c, dr, dc, found:false, color:WORD_COLORS[placed.length%WORD_COLORS.length]});
+        done = true;
+        break outer;
+      }
+    }
+  }
+  // Fill blanks
+  for (let r=0;r<SIZE;r++) for (let c=0;c<SIZE;c++)
+    if (!grid[r][c]) grid[r][c] = LETTERS[Math.floor(Math.random()*26)];
+
+  return {grid, placed, size:SIZE};
+}
+
+// ═══ GAME STATE ═══════════════════════════════════════════════════════════════
+let G = {data:null,level:1,selStart:null,selEnd:null,foundCells:{},timer:null,startTime:0,done:false,isRanked:false,matchId:null};
+
+function getCellsInLine(r1,c1,r2,c2) {
+  const ar=Math.abs(r2-r1), ac=Math.abs(c2-c1);
+  if (r1===r2) { // horizontal
+    const step=c2>c1?1:-1;
+    return Array.from({length:ac+1},(_,i)=>[r1,c1+step*i]);
+  }
+  if (c1===c2) { // vertical
+    const step=r2>r1?1:-1;
+    return Array.from({length:ar+1},(_,i)=>[r1+step*i,c1]);
+  }
+  if (ar===ac) { // diagonal
+    const dr=r2>r1?1:-1, dc=c2>c1?1:-1;
+    return Array.from({length:ar+1},(_,i)=>[r1+dr*i,c1+dc*i]);
+  }
+  return null;
+}
+
+function getSelCells() {
+  if (!G.selStart || !G.selEnd) return G.selStart ? [G.selStart] : [];
+  return getCellsInLine(G.selStart[0],G.selStart[1],G.selEnd[0],G.selEnd[1]) || [G.selStart];
+}
+
+function cellKey(r,c) { return `${r},${c}`; }
+
+function buildWsGrid(selCells) {
+  const {grid,size} = G.data;
+  const selSet = new Set((selCells||[]).map(([r,c])=>cellKey(r,c)));
+  // fit grid to screen on mobile: max available width minus padding, divided by cells+gaps
+  const avail = Math.min(window.innerWidth - 24, 480);
+  const fitCell = Math.floor((avail - size * 3) / size);
+  const cellPx = Math.max(18, Math.min(32, fitCell));
+  let html = `<div class="ws-grid" id="wsgrid" style="grid-template-columns:repeat(${size},${cellPx}px)">`;
+  for (let r=0;r<size;r++) for (let c=0;c<size;c++) {
+    const k = cellKey(r,c);
+    const fc = G.foundCells[k];
+    const isSel = selSet.has(k);
+    let bg = '', color = '';
+    if (fc) { bg=fc; color='#fff'; }
+    else if (isSel) { bg='#f39c12'; color='#fff'; }
+    html += `<div class="ws-cell${isSel?' sel':''}" data-r="${r}" data-c="${c}" style="width:${cellPx}px;height:${cellPx}px;font-size:${Math.max(9,cellPx-14)}px;${bg?`background:${bg};color:${color}`:''}">${grid[r][c]}</div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function buildWordList() {
+  return `<div class="word-list">${G.data.placed.map(p=>
+    p.found
+      ? `<span class="word-chip found" id="wc-${p.word}" style="background:${p.color};color:#fff;border-color:${p.color}">✓ ${p.word}</span>`
+      : `<span class="word-chip" id="wc-${p.word}" style="color:${p.color};border-color:${p.color}">${p.word}</span>`
+  ).join('')}</div>`;
+}
+
+function refreshWs(selCells) {
+  const wrap = el('ws-wrap');
+  if (wrap) wrap.innerHTML = buildWsGrid(selCells);
+  const wl = el('word-list-wrap');
+  if (wl) wl.innerHTML = buildWordList();
+}
+
+// Pointer handlers
+function getCellFromPoint(x, y) {
+  const e = document.elementFromPoint(x, y);
+  if (e && e.dataset.r !== undefined) return [+e.dataset.r, +e.dataset.c];
+  return null;
+}
+
+window.wsDown = e => {
+  if (G.done) return;
+  e.preventDefault();
+  e.currentTarget.setPointerCapture(e.pointerId); // currentTarget is ws-wrap — persists through grid rebuilds
+  const cell = getCellFromPoint(e.clientX, e.clientY);
+  if (!cell) return;
+  G.selStart = cell; G.selEnd = cell;
+  refreshWs(getSelCells());
+};
+window.wsMove = e => {
+  if (G.done || !G.selStart) return;
+  const cell = getCellFromPoint(e.clientX, e.clientY);
+  if (!cell) return;
+  G.selEnd = cell;
+  refreshWs(getSelCells());
+};
+window.wsUp = e => {
+  if (G.done || !G.selStart) return;
+  const cells = getSelCells();
+  checkSelection(cells);
+  G.selStart = null; G.selEnd = null;
+  refreshWs([]);
+};
+
+function checkSelection(cells) {
+  if (!cells || cells.length < 2) return;
+  const word = cells.map(([r,c])=>G.data.grid[r][c]).join('');
+  const rev  = word.split('').reverse().join('');
+  const match = G.data.placed.find(p=>!p.found && (p.word===word||p.word===rev));
+  if (!match) return;
+  match.found = true;
+  cells.forEach(([r,c]) => G.foundCells[cellKey(r,c)] = match.color);
+  const score = match.word.length * 10 * G.level;
+  toast(`✅ ${match.word}! +${score}pts`, 'success');
+  if (G.isRanked && S.socket) S.socket.emit('ranked:word_found', {matchId:G.matchId, word:match.word, score});
+  const chip = el('wc-'+match.word);
+  if (chip) { chip.classList.add('found'); chip.style.background=match.color; chip.style.color='#fff'; chip.textContent='✓ '+match.word; }
+  if (G.data.placed.every(p=>p.found) && !G.done) finishGame();
+}
+
+async function finishGame() {
+  G.done = true;
+  if (G.timer) clearInterval(G.timer);
+  const elapsed = Math.floor((Date.now()-G.startTime)/1000);
+  const totalScore = G.data.placed.reduce((s,p)=>s+p.word.length*10*G.level,0);
+  if (!G.isRanked) {
+    const nextLvl = G.level + 1;
+    modal('🎉 Level Complete!',
+      `<div style="text-align:center"><div style="font-size:3rem">🎊</div><h2 style="color:#7a3b10;margin:10px 0">Level ${G.level} Done!</h2><div id="lvl-rewards"><div class="spinner" style="width:20px;height:20px;margin:8px auto"></div></div></div>`,
+      `<button class="btn btn-primary" onclick="closeModal();go('play/${nextLvl}')">Next Level ▶</button><button class="btn btn-ghost" onclick="closeModal();go('home')">Home</button>`
+    );
+    try {
+      const r = await api('POST','/api/game/complete',{level:G.level,score:totalScore,timeTaken:elapsed,wordsFound:G.data.placed.length});
+      if (r.user) { S.user = r.user; renderNav(); }
+      if (r.newTitles?.length) r.newTitles.forEach(t=>toast(`🏅 Title unlocked: ${t.icon} ${t.name}!`,'gold',5000));
+      const multStr = r.mults&&(r.mults.xp>1||r.mults.coin>1)?`<p style="color:#27ae60;font-size:.8rem;margin-top:4px">🎉 Event bonus applied!</p>`:'';
+      const rEl = document.getElementById('lvl-rewards');
+      if (rEl) rEl.innerHTML = `<p>+${r.xpGain} XP &nbsp; +${r.coinGain} Coins</p>${multStr}${r.newTitles?.map(t=>titleBadge(t)).join(' ')||''}`;
+    } catch(e){
+      const rEl = document.getElementById('lvl-rewards');
+      if (rEl) rEl.innerHTML = `<p style="color:#e74c3c;font-size:.85rem">⚠️ Couldn't save progress: ${e.message}</p>`;
+    }
+  }
+}
+
+// ═══ SOCKET ════════════════════════════════════════════════════════════════════
+function renderBanned(type) {
+  document.getElementById('nav').style.display='none';
+  document.getElementById('events-bar').style.display='none';
+  document.getElementById('app').innerHTML=`<div style="text-align:center;padding:60px 20px;max-width:500px;margin:0 auto">
+    <div style="font-size:4rem;margin-bottom:16px">🚫</div>
+    <h2 style="color:#e74c3c;margin-bottom:12px">${type==='ip'?'IP Address Banned':'Device Banned'}</h2>
+    <p style="color:#c4956c;font-size:.95rem">${type==='ip'?'Your IP address has been banned from Word Legends.':'Your device has been banned from Word Legends.'}</p>
+    <p style="color:#888;font-size:.82rem;margin-top:12px">If you believe this is a mistake, contact an administrator.</p>
+  </div>`;
+}
+function connectSocket() {
+  if (S.socket?.connected) return;
+  S.socket = io({auth:{token:S.token, fp:getDeviceFp()}});
+  S.socket.on('connect_error', e => {
+    if (e.message==='IP_BANNED') renderBanned('ip');
+    else if (e.message==='DEVICE_BANNED') renderBanned('device');
+  });
+  S.socket.on('chat:new_message', msg => {
+    const cb = el('chat-messages');
+    if (cb && (S.chatFriendId===msg.sender_id||S.chatFriendId===msg.receiver_id)) {
+      cb.insertAdjacentHTML('beforeend', msgHTML(msg,S.user.id));
+      cb.scrollTop = cb.scrollHeight;
+    } else if (msg.sender_id!==S.user.id) {
+      toast(`💬 ${msg.sender_name}: ${msg.content.slice(0,40)}`);
+    }
+  });
+  S.socket.on('titles:new', titles => titles.forEach(t=>toast(`🏅 Title unlocked: ${t.icon} ${t.name}!`,'gold',5000)));
+  S.socket.on('event:started', ({event, endsAt, source}) => {
+    activeEvents[event.id] = {...event, endsAt};
+    renderEventsBar();
+    const who = source==='auto'?'Random event':'Owner event';
+    toast(`${event.icon} ${who}: ${event.name} — ${event.desc} for ${event.duration}min!`, 'gold', 6000);
+  });
+  S.socket.on('event:ended', ({id}) => {
+    delete activeEvents[id];
+    renderEventsBar();
+  });
+  S.socket.on('global:announcement', ({message, from}) => {
+    const banner = document.getElementById('announcement-banner');
+    document.getElementById('ann-text').textContent = `📢 ${from}: ${message}`;
+    banner.style.display = 'block';
+    document.getElementById('app').style.marginTop = (56 + banner.offsetHeight) + 'px';
+  });
+  S.socket.on('warning:received', ({reason, from}) => {
+    toast(`⚠️ You received a warning from ${from}: "${reason}"`, 'error', 8000);
+  });
+  S.socket.on('admin:new_request', req => {
+    if (location.hash.slice(1) === 'admin') loadPendingRequests();
+    toast(`📋 ${req.from} sent a ${req.type==='announce'?'announcement':'event'} request`, 'info', 5000);
+  });
+  S.socket.on('admin:request_resolved', ({approved, type}) => {
+    const action = type==='announce'?'announcement':'event';
+    toast(approved ? `✅ Your ${action} request was approved!` : `❌ Your ${action} request was denied.`, approved?'success':'error', 5000);
+  });
+}
+
+// ═══ NAVBAR ════════════════════════════════════════════════════════════════════
+function renderNav() {
+  const u = S.user, hash = location.hash.slice(1);
+  const links = [['home','🏠 Home'],['play','📝 Play'],['ranked','⚔️ Ranked'],['leaderboard','🏆 Ranks'],['friends','👥 Friends'],
+    ...(u&&['mod','admin','co-owner','owner'].includes(u.role)?[['admin','🛡️ Admin']]:[])] ;
+  const rank = u ? getRank(u.rank_points) : null;
+  el('nav').innerHTML = `<span class="brand">🔤 Word Legends</span>
+    ${links.map(([h,l])=>`<a href="#${h}" class="nav-link${hash===h?' active':''}">${l}</a>`).join('')}
+    <div class="nav-right">
+      ${u?`<span class="nav-stat">🪙 ${u.coins?.toLocaleString()}</span><span class="nav-stat">⭐ ${u.xp?.toLocaleString()}</span>
+        <div class="nav-user"><div class="nav-avatar" style="border-color:${rank?.color}" onclick="toggleNavDd(event)">${u.username[0].toUpperCase()} ${rank?.icon}</div>
+        <div class="nav-dropdown" id="nav-dd">
+          ${u.role!=='user'?`<span class="nav-dd-item" style="color:${roleColor(u.role)}">${u.role.toUpperCase()}</span>`:''}
+          <a href="#profile/${u.id}" class="nav-dd-item" onclick="closeNavDd()">👤 Profile</a>
+          <a href="#profile/${u.id}" class="nav-dd-item" onclick="closeNavDd();setTimeout(()=>document.querySelector('.tab-btn:nth-child(2)')?.click(),300)">🏅 My Titles</a>
+          <span class="nav-dd-item" onclick="logout()">🚪 Sign Out</span>
+        </div></div>`
+      :`<a href="#login" class="btn btn-ghost btn-sm">Login</a><a href="#register" class="btn btn-primary btn-sm">Sign Up</a>`}
+      <button class="nav-ham" onclick="toggleMobileMenu(event)" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>`;
+  // rebuild mobile menu
+  let mm = document.getElementById('mobile-menu');
+  if (!mm) { mm = document.createElement('div'); mm.id='mobile-menu'; document.body.insertBefore(mm, document.getElementById('app')); }
+  mm.innerHTML = links.map(([h,l])=>`<a href="#${h}" onclick="closeMobileMenu()">${l}</a>`).join('')
+    + (u ? `<span class="mm-item" onclick="closeMobileMenu();go('profile/${u.id}')">👤 Profile</span>
+      <span class="mm-item" onclick="closeMobileMenu();logout()">🚪 Sign Out</span>`
+    : `<a href="#login" onclick="closeMobileMenu()">Login</a><a href="#register" onclick="closeMobileMenu()">Sign Up</a>`);
+}
+function toggleMobileMenu(e){e.stopPropagation();document.getElementById('mobile-menu')?.classList.toggle('open');}
+function closeMobileMenu(){document.getElementById('mobile-menu')?.classList.remove('open');}
+
+function toggleNavDd(e){e.stopPropagation();document.getElementById('nav-dd')?.classList.toggle('open');}
+function closeNavDd(){document.getElementById('nav-dd')?.classList.remove('open');}
+document.addEventListener('click',()=>{closeNavDd();closeMobileMenu();});
+
+// ═══ LOGIN ════════════════════════════════════════════════════════════════════
+function renderLogin() {
+  app().innerHTML=`<div class="auth-box"><h2>🔤 Word Legends</h2><div class="card">
+    <div class="form-group"><label>Username or Email</label><input id="li-u" placeholder="Enter username or email"></div>
+    <div class="form-group"><label>Password</label><input id="li-p" type="password" placeholder="Enter password"></div>
+    <div id="li-err" class="form-error"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="doLogin()">Login</button>
+    <p style="text-align:center;margin-top:10px;font-size:.83rem;color:#c4956c">No account? <a href="#register" style="color:#d4a017">Sign Up</a></p>
+  </div></div>`;
+  el('li-p').addEventListener('keydown',e=>e.key==='Enter'&&doLogin());
+}
+async function doLogin() {
+  const u=el('li-u').value.trim(),p=el('li-p').value;
+  if(!u||!p){el('li-err').textContent='All fields required';return;}
+  try{const r=await api('POST','/api/auth/login',{username:u,password:p});S.token=r.token;S.user=r.user;localStorage.setItem('tok',r.token);connectSocket();loadEvents();go('home');}
+  catch(e){el('li-err').textContent=e.message;}
+}
+
+// ═══ REGISTER ═════════════════════════════════════════════════════════════════
+function renderRegister() {
+  app().innerHTML=`<div class="auth-box"><h2>Create Account</h2><div class="card">
+    <div class="form-group"><label>Username</label><input id="rg-u" placeholder="3-20 characters"></div>
+    <div class="form-group"><label>Password</label><input id="rg-p" type="password" placeholder="Min 6 characters"></div>
+    <div id="rg-err" class="form-error"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="doRegister()">Sign Up</button>
+    <p style="text-align:center;margin-top:10px;font-size:.83rem;color:#c4956c">Have account? <a href="#login" style="color:#d4a017">Login</a></p>
+  </div></div>`;
+}
+async function doRegister() {
+  const u=el('rg-u').value.trim(),p=el('rg-p').value;
+  if(!u||!p){el('rg-err').textContent='All fields required';return;}
+  try{const r=await api('POST','/api/auth/register',{username:u,password:p});S.token=r.token;S.user=r.user;localStorage.setItem('tok',r.token);connectSocket();loadEvents();go('home');}
+  catch(err){el('rg-err').textContent=err.message;}
+}
+
+// ═══ HOME ═════════════════════════════════════════════════════════════════════
+function renderHome() {
+  const u=S.user, rank=getRank(u.rank_points), lvl=Math.floor(u.xp/1000)+1, xpP=(u.xp%1000)/10;
+  app().innerHTML=`<div>
+    <div class="hero"><h1>Word Legends</h1><p style="color:#c4956c">Welcome back, <strong>${u.username}</strong>!</p></div>
+    <div class="grid-4" style="margin-bottom:22px">
+      <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val">${u.xp.toLocaleString()}</div><div class="stat-label">Total XP</div>
+        <div class="progress-wrap"><div class="progress-fill" style="width:${xpP}%"></div></div>
+        <div style="font-size:.73rem;color:#c4956c;margin-top:3px">Level ${lvl}</div></div>
+      <div class="stat-card"><div class="stat-icon">🪙</div><div class="stat-val">${u.coins.toLocaleString()}</div><div class="stat-label">Coins</div></div>
+      <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-val">${u.levels_completed}</div><div class="stat-label">Levels Done</div></div>
+      <div class="stat-card"><div class="stat-icon">${rank.icon}</div><div class="stat-val" style="color:${rank.color}">${rank.name}</div><div class="stat-label">${u.rank_points} RP</div></div>
+    </div>
+    <div class="action-grid">
+      <div class="action-card" onclick="go('play')"><div class="ac-icon">📝</div><h3>Play</h3><p>Find hidden words in the grid</p></div>
+      <div class="action-card" onclick="go('ranked')"><div class="ac-icon">⚔️</div><h3>Ranked</h3><p>Compete against other players</p></div>
+      <div class="action-card" onclick="go('leaderboard')"><div class="ac-icon">🏆</div><h3>Leaderboard</h3><p>See the top players</p></div>
+      <div class="action-card" onclick="go('friends')"><div class="ac-icon">👥</div><h3>Friends</h3><p>Chat with your friends</p></div>
+    </div>
+  </div>`;
+}
+
+// ═══ GAME ═════════════════════════════════════════════════════════════════════
+function renderGame(lvl) {
+  if (G.timer) { clearInterval(G.timer); G.timer = null; }
+  const level = lvl || (S.user?.levels_completed+1) || 1;
+  G = {data:null,level,selStart:null,selEnd:null,foundCells:{},timer:null,startTime:Date.now(),done:false,isRanked:false,matchId:null};
+  G.data = generateWordSearch(getWords(level));
+  let secs = 0;
+  app().innerHTML=`<div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <h1 class="page-title" style="margin:0">Level ${level}</h1>
+      <span style="margin-left:auto;font-size:.9rem">⏱ <span id="gtimer">0:00</span></span>
+      <span style="font-size:.85rem;color:#c4956c"><span id="gfound">0</span>/${G.data.placed.length} words</span>
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <div class="ws-wrap" id="ws-wrap" onpointerdown="wsDown(event)" onpointermove="wsMove(event)" onpointerup="wsUp(event)">${buildWsGrid([])}</div>
+      <div style="flex:1;min-width:200px">
+        <div class="card">
+          <h3 style="color:#7a3b10;margin-bottom:12px">Find these words</h3>
+          <div id="word-list-wrap">${buildWordList()}</div>
+        </div>
+        <p style="margin-top:10px;font-size:.8rem;color:#c4956c">Click and drag to select a word. Words can go in any direction!</p>
+      </div>
+    </div>
+  </div>`;
+  G.timer = setInterval(()=>{
+    secs++;
+    const m=Math.floor(secs/60),s=secs%60;
+    if(el('gtimer')) el('gtimer').textContent=`${m}:${s.toString().padStart(2,'0')}`;
+    if(el('gfound')) el('gfound').textContent=G.data.placed.filter(p=>p.found).length;
+  },1000);
+}
+
+// ═══ RANKED ═══════════════════════════════════════════════════════════════════
+function renderRanked() {
+  const sock = S.socket;
+  sock.off('ranked:waiting'); sock.off('ranked:match_found');
+  sock.off('ranked:score_update'); sock.off('ranked:match_ended');
+  let timerInt = null;
+  let matchEndedReceived = false;
+
+  function showIdle() {
+    app().innerHTML=`<div style="text-align:center;padding:40px 20px">
+      <h1 class="page-title" style="text-align:center">⚔️ Ranked Mode</h1>
+      <p style="color:#c4956c;margin-bottom:24px">2-minute word-finding battle against a real opponent!</p>
+      <button class="btn btn-gold" style="font-size:1.1rem;padding:14px 32px" onclick="joinQ()">⚔️ Find Match</button></div>`;
+  }
+  function showWaiting() {
+    app().innerHTML=`<div style="text-align:center;padding:40px 20px">
+      <h2 style="color:var(--gold);margin-bottom:16px">🔍 Finding Match...</h2>
+      <div class="spinner" style="margin:20px auto"></div>
+      <p style="color:#c4956c;margin:14px 0">Searching for opponent...</p>
+      <button class="btn btn-ghost" onclick="leaveQ()">Cancel</button></div>`;
+  }
+
+  window.joinQ  = () => { sock.emit('ranked:join_queue'); showWaiting(); };
+  window.leaveQ = () => { sock.emit('ranked:leave_queue'); showIdle(); };
+
+  function onWaiting() { showWaiting(); }
+
+  function onMatchFound(d) {
+    const isP1 = d.player1.id===S.user.id;
+    const me = isP1?d.player1:d.player2, opp = isP1?d.player2:d.player1;
+    let secs = d.duration;
+    G = {data:null,level:d.level,selStart:null,selEnd:null,foundCells:{},timer:null,startTime:Date.now(),done:false,isRanked:true,matchId:d.matchId};
+    G.data = generateWordSearch(getWords(d.level));
+
+    app().innerHTML=`<div>
+      <div class="score-bar-wrap">
+        <div class="score-row">
+          <span><strong>${me.username}</strong> — <span id="my-w">0</span> words</span>
+          <span class="timer-big" id="r-timer">${secs}</span>
+          <span><span id="op-w">0</span> words — <strong>${opp.username}</strong></span>
+        </div>
+        <div class="score-bar"><div class="score-fill" id="sfill" style="width:50%"></div></div>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+        <div class="ws-wrap" id="ws-wrap" onpointerdown="wsDown(event)" onpointermove="wsMove(event)" onpointerup="wsUp(event)">${buildWsGrid([])}</div>
+        <div style="flex:1;min-width:200px"><div class="card">
+          <h3 style="color:#7a3b10;margin-bottom:10px">Find these words</h3>
+          <div id="word-list-wrap">${buildWordList()}</div>
+        </div></div>
+      </div>
+    </div>`;
+
+    matchEndedReceived = false;
+    timerInt = setInterval(()=>{
+      secs--;
+      if(el('r-timer')) el('r-timer').textContent=secs;
+      if(secs<=0){
+        clearInterval(timerInt);
+        // Fallback: if server doesn't send match_ended within 6s, end client-side
+        setTimeout(()=>{
+          if(!matchEndedReceived && !G.done){
+            G.done=true;
+            modal('⏰ Time\'s Up!',
+              `<div style="text-align:center"><div style="font-size:3rem">⏰</div><h2 style="color:#d4a017;margin:10px 0">Match Over</h2><p style="color:#888">Waiting for results...</p></div>`,
+              `<button class="btn btn-primary" onclick="closeModal();renderRanked()">Play Again</button>
+               <button class="btn btn-ghost" onclick="closeModal();go('home')">Home</button>`
+            );
+          }
+        }, 6000);
+      }
+    },1000);
+  }
+
+  function onScoreUpdate(d) {
+    if(el('my-w')) el('my-w').textContent=d.p1Words||0;
+    if(el('op-w')) el('op-w').textContent=d.p2Words||0;
+    const tot=(d.p1Score||0)+(d.p2Score||0);
+    if(el('sfill')) el('sfill').style.width=(tot>0?Math.round((d.p1Score||0)/tot*100):50)+'%';
+  }
+
+  function onMatchEnded(d) {
+    matchEndedReceived=true;
+    if(timerInt) clearInterval(timerInt);
+    G.done=true;
+    api('GET','/api/game/me').then(u=>{S.user=u;renderNav();}).catch(()=>{});
+    const won=d.winnerId===S.user.id;
+    modal(won?'🏆 Victory!':'😢 Defeat',
+      `<div style="text-align:center"><div style="font-size:3rem">${won?'🏆':'😢'}</div>
+       <h2 style="color:${won?'#d4a017':'#e74c3c'};margin:10px 0">${won?'You Won!':'You Lost'}</h2>
+       <p>${won?`+${d.rpGain} RP`:`-${d.rpLoss} RP`}</p></div>`,
+      `<button class="btn btn-primary" onclick="closeModal();renderRanked()">Play Again</button>
+       <button class="btn btn-ghost" onclick="closeModal();go('home')">Home</button>`
+    );
+  }
+
+  sock.on('ranked:waiting', onWaiting);
+  sock.on('ranked:match_found', onMatchFound);
+  sock.on('ranked:score_update', onScoreUpdate);
+  sock.on('ranked:match_ended', onMatchEnded);
+  window.addEventListener('hashchange',()=>{
+    sock.off('ranked:waiting',onWaiting); sock.off('ranked:match_found',onMatchFound);
+    sock.off('ranked:score_update',onScoreUpdate); sock.off('ranked:match_ended',onMatchEnded);
+    if(timerInt) clearInterval(timerInt);
+  },{once:true});
+
+  showIdle();
+}
+
+// ═══ LEADERBOARD ══════════════════════════════════════════════════════════════
+async function renderLeaderboard() {
+  app().innerHTML=`<div><h1 class="page-title">🏆 Leaderboard</h1>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchLb(this,'rank')">⚔️ Ranked</button>
+      <button class="tab-btn" onclick="switchLb(this,'xp')">⭐ XP</button>
+      <button class="tab-btn" onclick="switchLb(this,'coins')">🪙 Coins</button>
+      <button class="tab-btn" onclick="switchLb(this,'levels')">📚 Levels</button>
+    </div>
+    <div class="card" id="lb-content"><div class="spinner"></div></div></div>`;
+  loadLb('rank');
+}
+
+async function loadLb(type) {
+  try {
+    const data = await api('GET',`/api/game/leaderboard/${type}`);
+    const col={rank:'rank_points',xp:'xp',coins:'coins',levels:'levels_completed'}[type];
+    const lbl={rank:'RP',xp:'XP',coins:'Coins',levels:'Levels'}[type];
+    let titles={};
+    try { const all=await api('GET','/api/titles/all'); all.forEach(t=>titles[t.id]=t); } catch{}
+    el('lb-content').innerHTML=`<table class="lb-table"><thead><tr><th>#</th><th>Player</th><th>Title</th><th>${lbl}</th></tr></thead><tbody>
+      ${data.map((u,i)=>{
+        const rc=roleColor(u.role);
+        const at=u.active_title&&titles[u.active_title]?titleBadge(titles[u.active_title]):'<span style="color:#ccc">—</span>';
+        return `<tr onclick="go('profile/${u.id}')" style="cursor:pointer">
+          <td><strong>${i+1}</strong></td>
+          <td>${rc?`<span style="color:${rc}">${u.role==='owner'||u.role==='co-owner'?'👑':u.role==='admin'?'🛡️':'🔨'} </span>`:''}${u.username}</td>
+          <td>${at}</td><td><strong>${u[col]?.toLocaleString()}</strong></td></tr>`;
+      }).join('')}</tbody></table>`;
+  } catch(e){el('lb-content').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+window.switchLb=(btn,type)=>{ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); el('lb-content').innerHTML='<div class="spinner"></div>'; loadLb(type); };
+
+// ═══ FRIENDS ══════════════════════════════════════════════════════════════════
+async function renderFriends() {
+  app().innerHTML=`<div><h1 class="page-title">👥 Friends</h1>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchFTab(this,'friends')">Friends</button>
+      <button class="tab-btn" onclick="switchFTab(this,'requests')">Requests</button>
+      <button class="tab-btn" onclick="switchFTab(this,'find')">Find</button>
+    </div><div id="ftab-content"></div></div>`;
+  showFriends();
+}
+window.switchFTab=(btn,tab)=>{ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); ({friends:showFriends,requests:showRequests,find:showFind}[tab])(); };
+
+async function showFriends() {
+  try {
+    const data=await api('GET','/api/friends');
+    const friends=data.filter(f=>f.status==='accepted').sort((a,b)=>b.is_online-a.is_online);
+    el('ftab-content').innerHTML=`<div class="friends-list">${friends.length?friends.map(f=>`<div class="friend-row" onclick="openChat(${f.id},'${f.username}')">
+      <div class="friend-avatar">${f.username[0].toUpperCase()}</div>
+      <div><strong>${f.username}</strong><div style="font-size:.76rem;color:#888">${getRank(f.rank_points).icon} ${getRank(f.rank_points).name}</div></div>
+      <div class="${f.is_online?'online-dot':'offline-dot'}" title="${f.is_online?'Online':'Offline'}" style="margin-left:auto"></div>
+      <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();go('profile/${f.id}')">👤</button>
+      <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();removeFriend(${f.id})">Remove</button>
+    </div>`).join(''):'<p style="color:#ccc;text-align:center;padding:20px">No friends yet!</p>'}</div>`;
+  } catch(e){el('ftab-content').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+
+async function showRequests() {
+  try {
+    const data=await api('GET','/api/friends');
+    const inc=data.filter(f=>f.status==='pending'&&f.direction==='received');
+    const out=data.filter(f=>f.status==='pending'&&f.direction==='sent');
+    el('ftab-content').innerHTML=`<h3 style="color:#7a3b10;margin-bottom:8px">Incoming (${inc.length})</h3>
+      <div class="friends-list">${inc.map(f=>`<div class="friend-row"><div class="friend-avatar">${f.username[0].toUpperCase()}</div><strong>${f.username}</strong>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="acceptFriend(${f.id})">Accept</button>
+        <button class="btn btn-ghost btn-sm" onclick="removeFriend(${f.id})">Decline</button></div>`).join('')||'<p style="color:#ccc">None</p>'}</div>
+      <h3 style="color:#7a3b10;margin:14px 0 8px">Sent (${out.length})</h3>
+      <div class="friends-list">${out.map(f=>`<div class="friend-row"><div class="friend-avatar">${f.username[0].toUpperCase()}</div><strong>${f.username}</strong>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="removeFriend(${f.id})">Cancel</button></div>`).join('')||'<p style="color:#ccc">None</p>'}</div>`;
+  } catch(e){el('ftab-content').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+
+function showFind() {
+  el('ftab-content').innerHTML=`<div class="card" style="margin-bottom:12px"><div style="display:flex;gap:8px">
+    <input id="sq" placeholder="Search by username..." oninput="doSearch()">
+    <button class="btn btn-primary btn-sm" onclick="doSearch()">🔍</button></div></div>
+  <div id="search-results"></div>`;
+}
+
+let sT;
+window.doSearch=()=>{ clearTimeout(sT); sT=setTimeout(async()=>{
+  const q=el('sq')?.value.trim(); if(!q){el('search-results').innerHTML='';return;}
+  try{const d=await api('GET',`/api/game/search?q=${encodeURIComponent(q)}`);
+    el('search-results').innerHTML=`<div class="friends-list">${d.map(u=>`<div class="friend-row">
+      <div class="friend-avatar">${u.username[0].toUpperCase()}</div>
+      <span onclick="go('profile/${u.id}')" style="cursor:pointer"><strong>${u.username}</strong></span>
+      <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="sendReq(${u.id})">+ Add</button>
+    </div>`).join('')||'<p style="color:#ccc">No results</p>'}</div>`;}catch{}
+},300);};
+
+window.sendReq=async id=>{try{await api('POST',`/api/friends/request/${id}`);toast('Friend request sent!','success');}catch(e){toast(e.message,'error');}};
+window.acceptFriend=async id=>{try{await api('POST',`/api/friends/accept/${id}`);showRequests();toast('Friend accepted!','success');}catch(e){toast(e.message,'error');}};
+window.removeFriend=async id=>{try{await api('DELETE',`/api/friends/${id}`);showFriends();}catch(e){toast(e.message,'error');}};
+
+window.openChat=async(fid,fname)=>{
+  S.chatFriendId=fid;
+  modal(`💬 ${fname}`,`<div id="chat-messages" class="chat-box"><div class="spinner"></div></div>
+    <div style="display:flex;gap:8px"><input id="ci" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg(${fid})">
+    <button class="btn btn-primary btn-sm" onclick="sendMsg(${fid})">Send</button></div>`,'');
+  try{const msgs=await api('GET',`/api/friends/messages/${fid}`);
+    const cb=el('chat-messages'); if(cb){cb.innerHTML=msgs.map(m=>msgHTML(m,S.user.id)).join('');cb.scrollTop=cb.scrollHeight;}}catch{}
+};
+
+function msgHTML(m,myId){
+  const isMe=m.sender_id===myId;
+  return `<div class="msg-bubble ${isMe?'msg-me':'msg-them'}"><div class="msg-sender">${isMe?'You':m.sender_name}</div>${m.content}</div>`;
+}
+
+window.sendMsg=async fid=>{
+  const inp=el('ci'), content=inp?.value.trim(); if(!content) return; inp.value='';
+  if(S.socket?.connected) { S.socket.emit('chat:message',{friendId:fid,content}); }
+  else{try{const msg=await api('POST',`/api/friends/messages/${fid}`,{content});const cb=el('chat-messages');if(cb){cb.insertAdjacentHTML('beforeend',msgHTML(msg,S.user.id));cb.scrollTop=cb.scrollHeight;}}catch(e){toast(e.message,'error');}}
+};
+
+// ═══ PROFILE ══════════════════════════════════════════════════════════════════
+async function renderProfile(id) {
+  const uid=id||S.user.id, isMe=uid===S.user.id;
+  app().innerHTML=`<div><div class="spinner"></div></div>`;
+  try {
+    const [pd,td]=await Promise.all([api('GET',`/api/game/profile/${uid}`),api('GET',`/api/titles/user/${uid}`)]);
+    const u=pd.user, rank=getRank(u.rank_points), lvl=Math.floor(u.xp/1000)+1;
+    const wr=u.wins+u.losses>0?Math.round(u.wins/(u.wins+u.losses)*100):0;
+    const rc=roleColor(u.role), at=td.unlocked.find(t=>t.id===td.activeTitle);
+    app().innerHTML=`<div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap">
+        <div style="width:60px;height:60px;border-radius:50%;background:${rank.color};display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff;flex-shrink:0">${u.username[0].toUpperCase()}</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <h2 style="font-family:'Cinzel',serif;color:var(--gold)">${u.username}</h2>
+            ${rc?`<span style="color:${rc};font-weight:700">${u.role.toUpperCase()}</span>`:''}
+            ${at?titleBadge(at):''}
+          </div>
+          <div style="display:flex;gap:8px;margin-top:3px"><span style="color:${rank.color}">${rank.icon} ${rank.name}</span><span style="color:#c4956c;font-size:.83rem">${u.rank_points} RP</span></div>
+          <div style="font-size:.78rem;color:#c4956c">Level ${lvl} • Joined ${new Date(u.created_at).toLocaleDateString()}</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          ${isMe?`<button class="btn btn-ghost btn-sm" onclick="go('play')">▶ Play</button>`:''}
+          ${!isMe&&u.role!=='owner'?`<button class="btn btn-sm" style="background:#c0392b;border:none;color:#fff" onclick="openReportModal(${uid},'${u.username}')">🚩 Report</button>`:''}
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchPTab(this,'stats')">📊 Stats</button>
+        <button class="tab-btn" onclick="switchPTab(this,'titles')">🏅 Titles</button>
+      </div>
+      <div id="ptab">
+        <div class="profile-stats">
+          <div class="ps-card"><div class="ps-icon">⭐</div><div class="ps-val">${u.xp.toLocaleString()}</div><div class="ps-label">Total XP</div></div>
+          <div class="ps-card"><div class="ps-icon">🪙</div><div class="ps-val">${u.coins.toLocaleString()}</div><div class="ps-label">Coins</div></div>
+          <div class="ps-card"><div class="ps-icon">📚</div><div class="ps-val">${u.levels_completed}</div><div class="ps-label">Levels Done</div></div>
+          <div class="ps-card"><div class="ps-icon">⚔️</div><div class="ps-val">${wr}%</div><div class="ps-label">Win Rate</div><div style="font-size:.76rem;color:#888">${u.wins}W/${u.losses}L</div></div>
+        </div>
+        <div class="card">
+          <h3 style="color:#7a3b10;margin-bottom:10px">Recent Levels</h3>
+          ${pd.recentLevels.length?`<table class="lb-table"><thead><tr><th>Level</th><th>Score</th><th>Words</th><th>Date</th></tr></thead><tbody>
+            ${pd.recentLevels.map(l=>`<tr><td><span class="badge-brown">Lvl ${l.level_number}</span></td><td>⭐ ${l.score.toLocaleString()}</td><td>🔤 ${l.words_found}</td><td>${new Date(l.completed_at).toLocaleDateString()}</td></tr>`).join('')}
+          </tbody></table>`:'<p style="color:#ccc;text-align:center;padding:14px">No levels yet</p>'}
+        </div>
+      </div>
+    </div>`;
+    window._td=td; window._profileIsMe=isMe; window._profileUid=uid;
+    if(isMe){
+      try{const r=await api('GET','/api/titles/my');if(r.newTitles?.length)r.newTitles.forEach(t=>toast(`🏅 Title unlocked: ${t.icon} ${t.name}!`,'gold',5000));}catch{}
+      try{const ws=await api('GET','/api/game/my-warnings');if(ws.length){const wDiv=document.createElement('div');wDiv.style.cssText='margin-top:14px';wDiv.innerHTML=`<div class="card" style="background:#2a1000;border:2px solid #e67e22"><h3 style="color:#e67e22;margin-bottom:10px">⚠️ Warnings (${ws.length})</h3>${ws.map(w=>`<div style="padding:6px 0;border-bottom:1px solid #3a2000"><span style="color:#f39c12">${w.reason}</span><br><span style="font-size:.75rem;color:#888">from ${w.issuer} · ${new Date(w.created_at).toLocaleDateString()}</span></div>`).join('')}</div>`;app().querySelector('#ptab')?.after(wDiv);}}catch{}
+    }
+  } catch(e){app().innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+
+window.switchPTab=(btn,tab)=>{ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); if(tab==='titles') renderTitlesTab(); };
+window.openReportModal=(uid,username)=>{
+  modal(`🚩 Report ${username}`,
+    `<p style="color:#aaa;margin-bottom:12px">Describe why you're reporting this player. Staff will review it.</p>
+    <textarea id="report-reason" placeholder="Reason for report..." style="width:100%;min-height:80px;resize:vertical;background:#1a1a1a;border:1px solid #444;color:#fff;padding:8px;border-radius:6px;font-size:.9rem"></textarea>
+    <p id="report-err" style="color:red;font-size:.82rem;margin-top:4px"></p>`,
+    `<button class="btn btn-danger" onclick="submitReport(${uid})">Submit Report</button><button class="btn btn-ghost" onclick="closeModal()">Cancel</button>`
+  );
+};
+window.submitReport=async uid=>{
+  const reason=el('report-reason')?.value.trim();
+  if(!reason){el('report-err').textContent='Please enter a reason.';return;}
+  try{await api('POST',`/api/report/${uid}`,{reason});closeModal();toast('Report submitted.','success');}
+  catch(e){const err=el('report-err');if(err)err.textContent=e.message;}
+};
+
+async function renderTitlesTab() {
+  const td=window._td, isMe=window._profileIsMe;
+  if(!td) return;
+  const owned=new Set(td.unlocked.map(t=>t.id));
+  try {
+    const all=await api('GET','/api/titles/all');
+    let html=td.activeTitle?`<div style="text-align:center;margin-bottom:16px"><p style="color:#c4956c;font-size:.83rem">Active Title</p>${titleBadge(td.unlocked.find(t=>t.id===td.activeTitle)||{})}</div>`:'';
+    html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px">`;
+    for(const t of all){
+      const o=owned.has(t.id), c=RARITY_COLOR[t.rarity]||'#888', act=td.activeTitle===t.id;
+      html+=`<div style="background:${o?'#fff':'#f8f0e8'};border-radius:10px;padding:12px;border:2px solid ${o?c:'#ddd'};opacity:${o?1:.55}">
+        <div style="font-size:1.3rem">${o?t.icon:'🔒'}</div>
+        <div style="font-weight:700;font-size:.83rem;color:${o?c:'#aaa'}">${o?t.name:'???'}</div>
+        <div style="font-size:.73rem;color:#888;margin:3px 0">${o?t.desc:'Locked'}</div>
+        <div style="font-size:.7rem;color:${c};font-weight:600;text-transform:uppercase">${t.rarity}</div>
+        ${o&&isMe?`<button class="btn btn-sm" style="margin-top:5px;${act?'background:#27ae60;color:#fff':'background:#f0e8d8;color:#7a3b10'}" onclick="equipTitle('${act?null:t.id}')">${act?'✓ Active':'Equip'}</button>`:''}</div>`;
+    }
+    html+='</div>';
+    el('ptab').innerHTML=html;
+  } catch(e){el('ptab').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+
+window.equipTitle=async titleId=>{
+  try{await api('POST','/api/titles/equip',{titleId:titleId==='null'?null:titleId});
+    if(window._td) window._td.activeTitle=titleId==='null'?null:titleId;
+    toast(titleId==='null'?'Title unequipped':'Title equipped!','success'); renderTitlesTab();}
+  catch(e){toast(e.message,'error');}
+};
+
+// ═══ ADMIN ════════════════════════════════════════════════════════════════════
+async function renderAdmin() {
+  if(!['mod','admin','co-owner','owner'].includes(S.user.role)){go('home');return;}
+  const isOwner = S.user.role==='owner';
+  const isCoOwner = S.user.role==='co-owner';
+  app().innerHTML=`<div><h1 class="page-title">🛡️ Admin Panel</h1>
+    ${isOwner?`<div class="card" style="margin-bottom:18px;background:#2a1a00;border:2px solid var(--gold)">
+      <h3 style="color:var(--gold);margin-bottom:10px">📢 Global Announcement</h3>
+      <div style="display:flex;gap:8px">
+        <input id="ann-input" placeholder="Message to all online players..." style="flex:1">
+        <button class="btn btn-gold" onclick="sendAnnouncement()">Send</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:18px;background:#0a1a2a;border:2px solid #2980b9">
+      <h3 style="color:#2980b9;margin-bottom:12px">🎉 Trigger Event</h3>
+      <div id="owner-events-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px"></div>
+    </div>
+    <div class="card" id="pending-requests-card" style="margin-bottom:18px;background:#1a0a2a;border:2px solid #9b59b6">
+      <h3 style="color:#9b59b6;margin-bottom:12px">📋 Pending Co-Owner Requests</h3>
+      <div id="pending-requests-list"><div class="spinner"></div></div>
+    </div>`:isCoOwner?`<div class="card" style="margin-bottom:18px;background:#2a1a00;border:2px solid var(--gold)">
+      <h3 style="color:var(--gold);margin-bottom:10px">📢 Request Announcement</h3>
+      <p style="color:#aaa;font-size:.8rem;margin-bottom:8px">Your request will be sent to the owner for approval.</p>
+      <div style="display:flex;gap:8px">
+        <input id="ann-input" placeholder="Message to all online players..." style="flex:1">
+        <button class="btn btn-gold" onclick="requestAnnouncement()">Request</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:18px;background:#0a1a2a;border:2px solid #2980b9">
+      <h3 style="color:#2980b9;margin-bottom:12px">🎉 Request Event</h3>
+      <p style="color:#aaa;font-size:.8rem;margin-bottom:8px">Event requests require owner approval before activating.</p>
+      <div id="owner-events-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px"></div>
+    </div>`:''}
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchAdm(this,'overview')">Overview</button>
+      <button class="tab-btn" onclick="switchAdm(this,'users')">Users</button>
+      <button class="tab-btn" onclick="switchAdm(this,'reports')">Reports</button>
+      <button class="tab-btn" onclick="switchAdm(this,'messages')">💬 Messages</button>
+      <button class="tab-btn" onclick="switchAdm(this,'bans')">🚫 Bans</button>
+    </div><div id="adm"><div class="spinner"></div></div></div>`;
+  loadAdmOverview();
+  if(isOwner) { loadOwnerEvents(); loadPendingRequests(); }
+  else if(isCoOwner) loadOwnerEvents();
+}
+
+async function loadOwnerEvents() {
+  const grid = el('owner-events-grid');
+  if (!grid) return;
+  const isCoOwner = S.user.role==='co-owner';
+  try {
+    const evs = await api('GET','/api/admin/events_list');
+    const ownerEvs = evs.filter(e=>!e.auto);
+    grid.innerHTML = ownerEvs.map(e=>{
+      const c = EV_COLORS[e.id]||'#d4a017';
+      const isActive = !!activeEvents[e.id];
+      const fn = isCoOwner ? `requestEvent('${e.id}')` : `triggerEvent('${e.id}')`;
+      const btnLabel = isCoOwner ? 'Request' : 'Trigger';
+      return `<div style="background:${isActive?c+'22':'#1a2a3a'};border:1px solid ${c};border-radius:8px;padding:10px;opacity:${isActive?.7:1}">
+        <div style="color:${c};font-size:1.05rem;font-weight:600;margin-bottom:4px">${e.icon} ${e.name}</div>
+        <div style="color:#aaa;font-size:.72rem;margin-bottom:8px">${e.desc}${isActive?' · <span style="color:'+c+'">Active</span>':''}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input id="dur-${e.id}" type="number" min="1" max="120" value="${e.duration}" style="width:56px;padding:3px 6px;font-size:.8rem;background:#0d1b2a;border:1px solid ${c};color:#fff;border-radius:4px" ${isActive?'disabled':''} title="Duration in minutes">
+          <span style="color:#aaa;font-size:.75rem">min</span>
+          <button class="btn btn-sm" style="background:${c};border:none;color:#000;font-weight:700;padding:4px 10px;flex:1" onclick="${fn}" ${isActive?'disabled':''}>${btnLabel}</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(err){if(grid)grid.innerHTML=`<p style="color:red">${err.message}</p>`;}
+}
+window.triggerEvent=async id=>{
+  const dur=+el(`dur-${id}`)?.value||null;
+  try{await api('POST','/api/admin/event',{eventId:id,duration:dur});toast('Event triggered!','success');loadOwnerEvents();}
+  catch(e){toast(e.message,'error');}
+};
+window.requestAnnouncement=async()=>{
+  const msg=el('ann-input')?.value.trim(); if(!msg) return;
+  try{await api('POST','/api/admin/request',{type:'announce',data:{message:msg}});el('ann-input').value='';toast('Request sent to owner!','success');}
+  catch(e){toast(e.message,'error');}
+};
+window.requestEvent=async id=>{
+  const dur=+el(`dur-${id}`)?.value||null;
+  try{await api('POST','/api/admin/request',{type:'event',data:{eventId:id,duration:dur}});toast('Event request sent to owner!','success');}
+  catch(e){toast(e.message,'error');}
+};
+async function loadPendingRequests(){
+  const list=el('pending-requests-list'); if(!list) return;
+  try{
+    const reqs=await api('GET','/api/admin/requests');
+    if(!reqs.length){list.innerHTML=`<p style="color:#aaa;font-size:.85rem">No pending requests.</p>`;return;}
+    list.innerHTML=reqs.map(r=>{
+      const when=new Date(r.createdAt).toLocaleTimeString();
+      const detail=r.type==='announce'?`"${r.data.message}"`:r.type==='event'?`Event: ${EVENTS_META[r.data.eventId]||r.data.eventId}`:'';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #2a1a3a">
+        <div style="flex:1">
+          <span style="color:#e0d0ff;font-weight:600">${r.from}</span>
+          <span style="color:#aaa;font-size:.8rem;margin-left:6px">${r.type==='announce'?'📢 Announcement':'🎉 Event'} · ${when}</span>
+          <div style="color:#ccc;font-size:.82rem;margin-top:2px">${detail}</div>
+        </div>
+        <button class="btn btn-sm" style="background:#27ae60;border:none;color:#fff" onclick="resolveRequest(${r.id},true)">Approve</button>
+        <button class="btn btn-sm" style="background:#c0392b;border:none;color:#fff" onclick="resolveRequest(${r.id},false)">Deny</button>
+      </div>`;
+    }).join('');
+  }catch(e){if(list)list.innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+const EVENTS_META={xp_storm:'XP Storm',gold_fever:'Gold Fever',word_blitz:'Word Blitz',double_down:'Double Down',mega_event:'MEGA EVENT',score_surge:'Score Surge'};
+window.resolveRequest=async(id,approve)=>{
+  try{
+    await api('POST',`/api/admin/request/${id}/${approve?'approve':'deny'}`);
+    toast(approve?'Request approved!':'Request denied.',approve?'success':'info');
+    loadPendingRequests();
+  }catch(e){toast(e.message,'error');}
+};
+window.switchAdm=(btn,tab)=>{ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); tab==='overview'?loadAdmOverview():tab==='users'?loadAdmUsers():tab==='reports'?loadAdmReports():tab==='messages'?loadAdmMessages():loadAdmBans(); };
+async function loadAdmReports(){
+  try{
+    const rows=await api('GET','/api/admin/reports');
+    if(!rows.length){el('adm').innerHTML=`<p style="color:#aaa;padding:20px">No reports yet.</p>`;return;}
+    el('adm').innerHTML=`<table class="lb-table"><thead><tr><th>Reporter</th><th>Reported</th><th>Reason</th><th>Status</th><th>Time</th><th>Action</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td>${r.reporter}</td>
+        <td style="color:#e74c3c;font-weight:600">${r.reported}</td>
+        <td style="max-width:200px;word-break:break-word">${r.reason}</td>
+        <td><span style="color:${r.status==='open'?'#e67e22':r.status==='resolved'?'#27ae60':'#aaa'}">${r.status}</span></td>
+        <td style="font-size:.8rem;color:#aaa">${new Date(r.created_at).toLocaleDateString()}</td>
+        <td>${r.status==='open'?`<div style="display:flex;gap:4px">
+          <button class="btn btn-sm" style="background:#27ae60;border:none;color:#fff;padding:3px 8px" onclick="handleReport(${r.id},'resolved')">Resolve</button>
+          <button class="btn btn-sm" style="background:#7f8c8d;border:none;color:#fff;padding:3px 8px" onclick="handleReport(${r.id},'dismissed')">Dismiss</button>
+        </div>`:'<span style="color:#aaa;font-size:.8rem">'+(r.handler||'—')+'</span>'}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  }catch(e){el('adm').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+window.handleReport=async(id,status)=>{
+  try{await api('PATCH',`/api/admin/reports/${id}`,{status});toast(status==='resolved'?'Report resolved':'Report dismissed','success');loadAdmReports();}
+  catch(e){toast(e.message,'error');}
+};
+async function loadAdmMessages(){
+  try{
+    const rows=await api('GET','/api/admin/messages');
+    if(!rows.length){el('adm').innerHTML=`<p style="color:#aaa;padding:20px">No conversations yet.</p>`;return;}
+    el('adm').innerHTML=`<p style="color:#aaa;font-size:.8rem;margin-bottom:10px">⚠️ Conversations involving the owner are hidden.</p>
+    <div class="card" style="overflow-x:auto"><table class="lb-table"><thead><tr><th>Users</th><th>Messages</th><th>Last Message</th><th></th></tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td><strong>${r.u1_name}</strong> &amp; <strong>${r.u2_name}</strong></td>
+        <td>${r.msg_count}</td>
+        <td style="font-size:.8rem;color:#aaa">${new Date(r.last_at).toLocaleString()}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="viewAdmConversation(${r.u1},${r.u2},'${r.u1_name}','${r.u2_name}')">View</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+  }catch(e){el('adm').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+window.viewAdmConversation=async(u1,u2,u1name,u2name)=>{
+  try{
+    const msgs=await api('GET',`/api/admin/messages/${u1}/${u2}`);
+    const html=msgs.length?msgs.map(m=>`<div style="padding:6px 0;border-bottom:1px solid #222">
+      <span style="color:#d4a017;font-size:.8rem;font-weight:600">${m.sender_name}</span>
+      <span style="color:#888;font-size:.72rem;margin-left:6px">${new Date(m.created_at).toLocaleTimeString()}</span>
+      <div style="color:#ddd;margin-top:2px;font-size:.88rem">${m.content}</div>
+    </div>`).join(''):`<p style="color:#aaa">No messages.</p>`;
+    modal(`💬 ${u1name} & ${u2name}`,`<div style="max-height:400px;overflow-y:auto">${html}</div>`,
+      `<button class="btn btn-ghost" onclick="closeModal();loadAdmMessages()">← Back</button>`);
+  }catch(e){toast(e.message,'error');}
+};
+
+async function loadAdmBans(){
+  try{
+    const [ips,devs]=await Promise.all([api('GET','/api/admin/bans/ip'),api('GET','/api/admin/bans/device')]);
+    el('adm').innerHTML=`
+    <div class="card" style="margin-bottom:14px">
+      <h3 style="color:#e74c3c;margin-bottom:10px">🌐 IP Bans (${ips.length})</h3>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <input id="ban-ip-val" placeholder="IP address..." style="flex:1">
+        <input id="ban-ip-reason" placeholder="Reason..." style="flex:1">
+        <button class="btn btn-sm" style="background:#e74c3c;border:none;color:#fff" onclick="addIpBan()">Ban IP</button>
+      </div>
+      ${ips.length?`<table class="lb-table"><thead><tr><th>IP</th><th>Reason</th><th>By</th><th>Date</th><th></th></tr></thead><tbody>
+        ${ips.map(b=>`<tr><td style="font-family:monospace">${b.ip}</td><td style="color:#aaa;font-size:.8rem">${b.reason||'—'}</td><td style="font-size:.8rem">${b.banned_by_name||'—'}</td><td style="font-size:.78rem;color:#aaa">${new Date(b.created_at).toLocaleDateString()}</td>
+        <td><button class="btn btn-sm" style="background:#555;border:none;color:#fff;padding:2px 7px" onclick="unbanIp('${encodeURIComponent(b.ip)}')">Unban</button></td></tr>`).join('')}
+      </tbody></table>`:'<p style="color:#aaa;font-size:.83rem">No IP bans.</p>'}
+    </div>
+    <div class="card">
+      <h3 style="color:#e67e22;margin-bottom:10px">💻 Device Bans (${devs.length})</h3>
+      ${devs.length?`<table class="lb-table"><thead><tr><th>Device ID</th><th>Reason</th><th>By</th><th>Date</th><th></th></tr></thead><tbody>
+        ${devs.map(b=>`<tr><td style="font-family:monospace;font-size:.8rem">${b.fingerprint}</td><td style="color:#aaa;font-size:.8rem">${b.reason||'—'}</td><td style="font-size:.8rem">${b.banned_by_name||'—'}</td><td style="font-size:.78rem;color:#aaa">${new Date(b.created_at).toLocaleDateString()}</td>
+        <td><button class="btn btn-sm" style="background:#555;border:none;color:#fff;padding:2px 7px" onclick="unbanDevice(${b.id})">Unban</button></td></tr>`).join('')}
+      </tbody></table>`:'<p style="color:#aaa;font-size:.83rem">No device bans.</p>'}
+    </div>`;
+  }catch(e){el('adm').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+window.addIpBan=async()=>{
+  const ip=el('ban-ip-val')?.value.trim(),reason=el('ban-ip-reason')?.value.trim();
+  if(!ip){toast('Enter an IP','error');return;}
+  try{await api('POST','/api/admin/bans/ip',{ip,reason});toast('IP banned','success');loadAdmBans();}
+  catch(e){toast(e.message,'error');}
+};
+window.unbanIp=async ip=>{
+  try{await api('DELETE',`/api/admin/bans/ip/${ip}`);toast('IP unbanned','success');loadAdmBans();}
+  catch(e){toast(e.message,'error');}
+};
+window.unbanDevice=async id=>{
+  try{await api('DELETE',`/api/admin/bans/device/${id}`);toast('Device unbanned','success');loadAdmBans();}
+  catch(e){toast(e.message,'error');}
+};
+
+async function loadAdmOverview(){
+  try{const d=await api('GET','/api/admin/stats');
+    el('adm').innerHTML=`<div class="grid-4" style="margin-bottom:18px">
+      <div class="stat-card"><div class="stat-icon">👤</div><div class="stat-val">${d.totalUsers}</div><div class="stat-label">Users</div></div>
+      <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-val">${d.totalLevels}</div><div class="stat-label">Levels Played</div></div>
+      <div class="stat-card"><div class="stat-icon">⚔️</div><div class="stat-val">${d.totalMatches}</div><div class="stat-label">Ranked Matches</div></div>
+      <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-val">${d.totalMessages}</div><div class="stat-label">Messages</div></div>
+    </div>
+    <div class="card"><h3 style="color:#7a3b10;margin-bottom:10px">Recent Registrations</h3>
+    <table class="lb-table"><thead><tr><th>Username</th><th>Role</th><th>Joined</th></tr></thead><tbody>
+      ${d.recentUsers.map(u=>`<tr><td>${u.username}</td><td><span style="color:${roleColor(u.role)||'#333'}">${u.role}</span></td><td>${new Date(u.created_at).toLocaleDateString()}</td></tr>`).join('')}
+    </tbody></table></div>`;}
+  catch(e){el('adm').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+
+async function loadAdmUsers(q=''){
+  try{let users=await api('GET','/api/admin/users');
+    if(q) users=users.filter(u=>u.username.toLowerCase().includes(q.toLowerCase())||u.email.toLowerCase().includes(q.toLowerCase()));
+    el('adm').innerHTML=`<div style="margin-bottom:10px"><input placeholder="Search users..." value="${q}" oninput="loadAdmUsers(this.value)" style="max-width:280px"></div>
+    <div class="card" style="overflow-x:auto"><table class="lb-table"><thead><tr><th>User</th><th>Role</th><th>XP</th><th>Coins</th><th>Status</th><th></th></tr></thead><tbody>
+      ${users.map(u=>`<tr>
+        <td><strong>${u.username}</strong><br><span style="font-size:.73rem;color:#aaa">${u.email}</span></td>
+        <td><span style="color:${roleColor(u.role)||'#333'}">${u.role}</span></td>
+        <td>${u.xp.toLocaleString()}</td><td>${u.coins.toLocaleString()}</td>
+        <td>${u.is_banned?'<span style="color:red">Banned</span>':u.is_online?'<span style="color:#22c55e">● Online</span>':'<span style="color:#aaa">Offline</span>'}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick='manageUser(${JSON.stringify(u).replace(/'/g,"&#39;")})'>Manage</button></td>
+      </tr>`).join('')}</tbody></table></div>`;}
+  catch(e){el('adm').innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+
+window.manageUser=async u=>{
+  const RL={user:0,mod:1,admin:2,'co-owner':3,owner:4}, me=S.user;
+  const isOwner=me.role==='owner';
+  const can=RL[me.role]>RL[u.role]&&u.role!=='owner'&&(u.role!=='co-owner'||isOwner);
+  const canBan=can&&(u.role!=='co-owner'||isOwner);
+  const canWarn=can;
+  let warns=[];
+  try{warns=await api('GET',`/api/admin/users/${u.id}/warnings`);}catch{}
+  const canRemoveWarn=RL[me.role]>=2;
+  const warnsHtml=warns.length?warns.map(w=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #2a2a2a">
+    <div style="flex:1"><span style="color:#e67e22;font-size:.82rem">⚠️ ${w.reason}</span><br><span style="font-size:.72rem;color:#888">by ${w.issuer} · ${new Date(w.created_at).toLocaleDateString()}</span></div>
+    ${canRemoveWarn?`<button class="btn btn-sm" style="background:#555;border:none;color:#fff;padding:2px 7px;font-size:.75rem" onclick="removeWarn(${w.id},${u.id})">✕</button>`:''}
+  </div>`).join(''):`<p style="color:#aaa;font-size:.82rem">No warnings.</p>`;
+  const totalSecs = (u.total_online_seconds||0) + (u.session_secs||0);
+  const hrs = Math.floor(totalSecs/3600), mins = Math.floor((totalSecs%3600)/60);
+  const ageDays = Math.max(1, Math.ceil((Date.now()-new Date(u.created_at))/86400000));
+  const avgMins = Math.round(totalSecs/60/ageDays);
+  modal(`Manage: ${u.username}`,`
+    <p style="margin-top:6px"><strong>XP:</strong> ${u.xp} | <strong>Coins:</strong> ${u.coins} | <strong>Role:</strong> <span style="color:${roleColor(u.role)||'#333'}">${u.role}</span></p>
+    <p style="font-size:.82rem;color:#aaa;margin-top:4px">⏱ Online: <strong style="color:#ddd">${hrs}h ${mins}m total</strong> · Avg: <strong style="color:#ddd">${avgMins} min/day</strong> · Account age: ${ageDays} days${u.is_online?` · <span style="color:#22c55e">● Currently online</span>`:''}</p>
+    ${can&&RL[me.role]>=2?`<div class="form-group" style="margin-top:12px"><label>Set Role</label>
+      <select id="mr">
+        <option ${u.role==='user'?'selected':''} value="user">User</option>
+        <option ${u.role==='mod'?'selected':''} value="mod">Mod</option>
+        ${RL[me.role]>=3?`<option ${u.role==='admin'?'selected':''} value="admin">Admin</option>`:''}
+        ${me.role==='owner'?`<option ${u.role==='co-owner'?'selected':''} value="co-owner">Co-Owner</option>`:''}
+      </select>
+      <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="setRole(${u.id})">Set Role</button></div>
+    <div class="form-group"><label>Adjust Coins</label><input id="mc" type="number" placeholder="e.g. 1000 or -500"><button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="adjC(${u.id})">Apply</button></div>
+    <div class="form-group"><label>Adjust XP</label><input id="mx" type="number" placeholder="e.g. 1000 or -500"><button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="adjX(${u.id})">Apply</button></div>`:''}
+    ${canWarn?`<div class="form-group" style="margin-top:10px;padding-top:10px;border-top:1px solid #2a2a2a">
+      <label>⚠️ Issue Warning</label>
+      <div style="display:flex;gap:6px">
+        <input id="warn-reason" placeholder="Reason for warning..." style="flex:1">
+        <button class="btn btn-sm" style="background:#e67e22;border:none;color:#fff" onclick="issueWarn(${u.id})">Warn</button>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid #2a2a2a">
+      <label style="font-size:.8rem;color:#aaa;margin-bottom:6px;display:block">Warnings (${warns.length})</label>
+      ${warnsHtml}
+    </div>`:''}
+    ${canBan?`<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn ${u.is_banned?'btn-primary':'btn-danger'} btn-sm" onclick="banU(${u.id},${!u.is_banned})">${u.is_banned?'Unban':'Ban'}</button>
+      ${u.last_ip?`<button class="btn btn-sm" style="background:#c0392b;border:none;color:#fff" onclick="ipBanUser(${u.id})" title="Ban IP: ${u.last_ip}">🌐 IP Ban</button>`:''}
+      ${u.last_fingerprint?`<button class="btn btn-sm" style="background:#7d3c98;border:none;color:#fff" onclick="deviceBanUser(${u.id})">💻 HW Ban</button>`:''}
+      ${RL[me.role]>=4?`<button class="btn btn-danger btn-sm" onclick="delU(${u.id})">Delete</button>`:''}</div>`:'<p style="color:#aaa;margin-top:10px">Cannot modify this user.</p>'}
+  `);
+};
+window.sendAnnouncement=async()=>{
+  const msg=el('ann-input')?.value.trim(); if(!msg) return;
+  try{await api('POST','/api/admin/announce',{message:msg});el('ann-input').value='';toast('Announcement sent!','success');}
+  catch(e){toast(e.message,'error');}
+};
+window.setRole=async id=>{try{await api('PATCH',`/api/admin/users/${id}/role`,{role:el('mr').value});toast('Role updated','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}};
+window.adjC=async id=>{const v=+el('mc').value;if(isNaN(v))return;try{await api('PATCH',`/api/admin/users/${id}/coins`,{amount:v});toast('Coins updated','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}};
+window.adjX=async id=>{const v=+el('mx').value;if(isNaN(v))return;try{await api('PATCH',`/api/admin/users/${id}/xp`,{amount:v});toast('XP updated','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}};
+window.banU=async(id,ban)=>{try{await api('PATCH',`/api/admin/users/${id}/ban`,{banned:ban});toast(ban?'Banned':'Unbanned','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}};
+window.ipBanUser=async id=>{
+  const reason=prompt('Reason for IP ban (optional):');
+  if(reason===null)return;
+  try{const r=await api('POST',`/api/admin/users/${id}/ban-ip`,{reason});toast(`IP banned: ${r.ip}`,'success');closeModal();loadAdmUsers();}
+  catch(e){toast(e.message,'error');}
+};
+window.deviceBanUser=async id=>{
+  const reason=prompt('Reason for device ban (optional):');
+  if(reason===null)return;
+  try{await api('POST',`/api/admin/users/${id}/ban-device`,{reason});toast('Device banned','success');closeModal();loadAdmUsers();}
+  catch(e){toast(e.message,'error');}
+};;
+window.delU=async id=>{if(!confirm('Delete permanently?'))return;try{await api('DELETE',`/api/admin/users/${id}`);toast('Deleted','success');closeModal();loadAdmUsers();}catch(e){toast(e.message,'error');}};
+window.issueWarn=async id=>{
+  const reason=el('warn-reason')?.value.trim(); if(!reason){toast('Enter a reason','error');return;}
+  try{await api('POST',`/api/admin/users/${id}/warn`,{reason});toast('Warning issued','success');closeModal();loadAdmUsers();}
+  catch(e){toast(e.message,'error');}
+};
+window.removeWarn=async(warnId,userId)=>{
+  try{await api('DELETE',`/api/admin/warnings/${warnId}`);toast('Warning removed','success');const u=await api('GET',`/api/game/profile/${userId}`);manageUser(u.user);}
+  catch(e){toast(e.message,'error');}
+};
+
+// ═══ ROUTER ═══════════════════════════════════════════════════════════════════
+function logout() {
+  S.user=null; S.token=null; localStorage.removeItem('tok');
+  S.socket?.disconnect(); S.socket=null; go('login');
+}
+
+async function route() {
+  if (G.timer) { clearInterval(G.timer); G.timer = null; }
+  if (S.token && !S.user) {
+    try { S.user=await api('GET','/api/game/me'); connectSocket(); loadEvents(); }
+    catch { S.token=null; localStorage.removeItem('tok'); }
+  }
+  const hash=location.hash.slice(1)||'home';
+  const [page,...params]=hash.split('/');
+  if (!S.user && page!=='login' && page!=='register') return go('login');
+  renderNav();
+  const fns={
+    login:renderLogin, register:renderRegister, home:renderHome,
+    play:()=>renderGame(+params[0]||null), ranked:renderRanked,
+    leaderboard:renderLeaderboard, friends:renderFriends,
+    profile:()=>renderProfile(+params[0]||S.user?.id), admin:renderAdmin,
+  };
+  (fns[page]||(()=>go('home')))();
+}
+
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>
